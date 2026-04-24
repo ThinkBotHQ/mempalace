@@ -5,6 +5,7 @@ from __future__ import annotations
 import functools
 import logging
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Protocol, runtime_checkable
 
 from google import genai
@@ -19,6 +20,7 @@ from tenacity import (
 logger = logging.getLogger(__name__)
 
 _BATCH_SIZE = 100
+_PARALLEL_WORKERS = 15
 _DOC_PREFIX = "task: retrieval document | "
 _QUERY_PREFIX = "task: search query | query: "
 
@@ -78,11 +80,22 @@ class GeminiEmbedder:
         return result
 
     def _embed_batched(self, texts: list[str]) -> list[list[float]]:
-        all_vectors: list[list[float]] = []
-        for text in texts:
-            result = self._call_api(text)
-            all_vectors.append(result.embeddings[0].values)
-        return all_vectors
+        if len(texts) <= 1:
+            return [self._call_api(t).embeddings[0].values for t in texts]
+
+        results: list[tuple[int, list[float]]] = []
+        with ThreadPoolExecutor(max_workers=_PARALLEL_WORKERS) as pool:
+            futures = {
+                pool.submit(self._call_api, text): i
+                for i, text in enumerate(texts)
+            }
+            for future in as_completed(futures):
+                idx = futures[future]
+                result = future.result()
+                results.append((idx, result.embeddings[0].values))
+
+        results.sort(key=lambda x: x[0])
+        return [vec for _, vec in results]
 
     @retry(
         retry=retry_if_exception_type(Exception),
