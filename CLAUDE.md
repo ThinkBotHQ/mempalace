@@ -131,3 +131,44 @@ Knowledge Graph:
 - **Adding a storage backend**: subclass `mempalace/backends/base.py`, register in `backends/__init__.py`
 - **Input validation**: `mempalace/config.py` — `sanitize_name()` / `sanitize_content()`
 - **Tests**: mirror source structure in `tests/test_<module>.py`
+
+## Conductor — Baseline Agent Rules
+
+> Always active. Full reference: `.claude/skills/conductor/SKILL.md`
+> Agents: `.claude/agents/opus-4-{6,7}-worker.md`
+
+**Model routing:**
+- **Opus (host)** orchestrates, plans, reviews, simple inline work.
+  Before reading a 3rd file or writing >5 lines → delegate to Codex.
+- **Codex `gpt-5.4`** is the default worker for all non-trivial work.
+- **Sonnet** validates only. Never bulk implementation.
+- **Opus workers** (4.6 or 4.7 via `.claude/agents/`): deep reasoning.
+  4.6 for instruction following, hard prompts, business/finance.
+  4.7 for coding, expert, sciences, writing quality.
+- **Haiku is banned.** Minimum tier is Sonnet.
+
+**Codex defaults:**
+```bash
+codex exec -m gpt-5.4 --yolo --skip-git-repo-check '<prompt>'
+```
+- `--yolo` always. Full filesystem + network. Never `--full-auto` (no net).
+- Effort: medium (default), high (multi-file), xhigh (research/review).
+
+**Prompt hardening** (every delegation):
+- No git commit/push/PR — orchestrator owns git.
+- Report dependency installs. Python: `uv run`. JS/TS: `bun run`.
+- Resolve fully. Report blockers, don't skip silently.
+
+**Guardrails:** max 50–100 tool calls/subagent, max 3 retries/call,
+progress log every 10 items, every subagent produces a concrete artifact.
+
+**Parallel work:** fire Opus worker + Codex xhigh in parallel for complex
+research/arch/diagnosis.
+
+**Plans as files:** do NOT use `EnterPlanMode`. Write plans directly to
+`tmp/conductor/plans/`.
+
+### Project overrides
+- Ship command: `uv tool install --force .` (for mempalace core changes)
+- Rate limits: Gemini embedding-2 ~1500 RPM
+- Backend: pgvector on Docker port 5434 (`mempalace-pgvector` container)

@@ -45,6 +45,46 @@ CREATE INDEX IF NOT EXISTS idx_mp_docs_source ON mp_documents ((metadata->>'sour
 -- Collection lookup
 CREATE INDEX IF NOT EXISTS idx_mp_docs_collection ON mp_documents (collection_id);
 
+-- ── Knowledge Graph ───────────────────────────────────────────────────────
+-- Temporal entity-relationship graph (people, projects, tools, concepts + typed edges)
+-- Mirrors the SQLite schema in mempalace/knowledge_graph.py but uses jsonb
+-- for properties and pg_trgm for fuzzy entity name search.
+
+CREATE TABLE IF NOT EXISTS mp_kg_entities (
+    id              text PRIMARY KEY,
+    name            text NOT NULL,
+    type            text DEFAULT 'unknown',
+    properties      jsonb DEFAULT '{}',
+    created_at      timestamptz DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_kg_entities_name_trgm
+    ON mp_kg_entities USING gin (name gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_kg_entities_type
+    ON mp_kg_entities (type);
+
+CREATE TABLE IF NOT EXISTS mp_kg_triples (
+    id              text PRIMARY KEY,
+    subject         text NOT NULL REFERENCES mp_kg_entities(id),
+    predicate       text NOT NULL,
+    object          text NOT NULL REFERENCES mp_kg_entities(id),
+    valid_from      text,
+    valid_to        text,
+    confidence      real DEFAULT 1.0,
+    source_closet   text,
+    source_file     text,
+    source_drawer_id text,
+    adapter_name    text,
+    metadata        jsonb DEFAULT '{}',
+    extracted_at    timestamptz DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_kg_triples_subject ON mp_kg_triples(subject);
+CREATE INDEX IF NOT EXISTS idx_kg_triples_object ON mp_kg_triples(object);
+CREATE INDEX IF NOT EXISTS idx_kg_triples_predicate ON mp_kg_triples(predicate);
+CREATE INDEX IF NOT EXISTS idx_kg_triples_valid ON mp_kg_triples(valid_from, valid_to);
+CREATE INDEX IF NOT EXISTS idx_kg_triples_source_drawer ON mp_kg_triples(source_drawer_id);
+
 -- Vector search function with iterative scan for filtered queries
 CREATE OR REPLACE FUNCTION match_memories(
     query_embedding vector(768),
