@@ -263,8 +263,20 @@ def _spawn_mine(cmd: list) -> None:
     _MINE_PID_FILE.write_text(str(proc.pid))
 
 
+def _mine_disabled() -> bool:
+    """Check if mining is disabled via env var or flag file."""
+    if os.environ.get("MEMPALACE_NO_MINE"):
+        return True
+    if (STATE_DIR / "no_mine").exists():
+        return True
+    return False
+
+
 def _maybe_auto_ingest(transcript_path: str = ""):
     """Run mempalace mine in background if a mine directory is available."""
+    if _mine_disabled():
+        _log("Auto-ingest disabled via MEMPALACE_NO_MINE or flag file")
+        return
     mine_dir = _get_mine_dir(transcript_path)
     if not mine_dir:
         return
@@ -272,22 +284,27 @@ def _maybe_auto_ingest(transcript_path: str = ""):
         _log("Skipping auto-ingest: mine already running")
         return
     try:
-        _spawn_mine([sys.executable, "-m", "mempalace", "mine", mine_dir])
+        python = _mempalace_python()
+        _spawn_mine([python, "-m", "mempalace", "mine", mine_dir])
     except OSError:
         pass
 
 
 def _mine_sync(transcript_path: str = ""):
     """Run mempalace mine synchronously (for precompact -- data must land first)."""
+    if _mine_disabled():
+        _log("Sync ingest disabled via MEMPALACE_NO_MINE or flag file")
+        return
     mine_dir = _get_mine_dir(transcript_path)
     if not mine_dir:
         return
     try:
         STATE_DIR.mkdir(parents=True, exist_ok=True)
         log_path = STATE_DIR / "hook.log"
+        python = _mempalace_python()
         with open(log_path, "a") as log_f:
             subprocess.run(
-                [sys.executable, "-m", "mempalace", "mine", mine_dir],
+                [python, "-m", "mempalace", "mine", mine_dir],
                 stdout=log_f,
                 stderr=log_f,
                 timeout=60,
@@ -437,6 +454,9 @@ def _save_diary_direct(
 
 def _ingest_transcript(transcript_path: str):
     """Mine a Claude Code session transcript into the palace as a conversation."""
+    if _mine_disabled():
+        _log("Transcript ingest disabled via MEMPALACE_NO_MINE or flag file")
+        return
     path = Path(transcript_path).expanduser()
     if not path.is_file() or path.stat().st_size < 100:
         return
