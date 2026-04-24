@@ -79,10 +79,9 @@ class GeminiEmbedder:
 
     def _embed_batched(self, texts: list[str]) -> list[list[float]]:
         all_vectors: list[list[float]] = []
-        for i in range(0, len(texts), _BATCH_SIZE):
-            batch = texts[i : i + _BATCH_SIZE]
-            result = self._call_api(batch)
-            all_vectors.extend(e.values for e in result.embeddings)
+        for text in texts:
+            result = self._call_api(text)
+            all_vectors.append(result.embeddings[0].values)
         return all_vectors
 
     @retry(
@@ -93,10 +92,10 @@ class GeminiEmbedder:
             "Gemini embed retry %d: %s", rs.attempt_number, rs.outcome.exception()
         ),
     )
-    def _call_api(self, texts: list[str]):
+    def _call_api(self, text: str):
         return self._client.models.embed_content(
             model=self._model,
-            contents=texts,
+            contents=text,
             config=types.EmbedContentConfig(
                 output_dimensionality=self._dimension,
             ),
