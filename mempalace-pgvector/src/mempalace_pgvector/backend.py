@@ -44,8 +44,15 @@ class PgvectorBackend(BaseBackend):
 
         self._pool_max = pool_max or int(os.environ.get("MEMPALACE_PGVECTOR_POOL_MAX", "4"))
         self._pool = ConnectionPool(self._dsn, min_size=1, max_size=self._pool_max, open=True)
-        self._embedder = embedder or self._make_default_embedder()
+        self._explicit_embedder = embedder
+        self._embedder_cached: Embedder | None = None
         self._collections: dict[str, PgvectorCollection] = {}
+
+    @property
+    def _embedder(self) -> Embedder:
+        if self._embedder_cached is None:
+            self._embedder_cached = self._explicit_embedder or self._make_default_embedder()
+        return self._embedder_cached
 
     def _make_default_embedder(self) -> GeminiEmbedder:
         model = os.environ.get("MEMPALACE_EMBEDDER_MODEL", "gemini-embedding-2")

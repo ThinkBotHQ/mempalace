@@ -22,5 +22,8 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/mempalace_pgvector"]
 
+[project.entry-points."mempalace.backends"]
+pgvector = "mempalace_pgvector:PgvectorBackend"
+
 [tool.ruff]
 line-length = 100
