@@ -58,6 +58,8 @@ from .config import (  # noqa: E402
 )
 from .version import __version__  # noqa: E402
 from .backends.chroma import ChromaBackend, ChromaCollection  # noqa: E402
+from .backends.base import PalaceRef  # noqa: E402
+from .backends.registry import get_backend  # noqa: E402
 from .query_sanitizer import sanitize_query  # noqa: E402
 from .searcher import search_memories  # noqa: E402
 from .palace_graph import (  # noqa: E402
@@ -212,8 +214,32 @@ def _get_client():
 
 
 def _get_collection(create=False):
-    """Return the ChromaDB collection, caching the client between calls."""
+    """Return the storage collection, caching between calls.
+
+    Uses MEMPALACE_BACKEND env var to select backend (default: chroma).
+    pgvector backend uses the registry + PalaceRef.
+    """
     global _collection_cache, _metadata_cache, _metadata_cache_time
+
+    backend_name = os.environ.get("MEMPALACE_BACKEND", "chroma")
+
+    if backend_name != "chroma":
+        try:
+            if _collection_cache is None or create:
+                backend = get_backend(backend_name)
+                palace_id = os.environ.get("MEMPALACE_PALACE_ID") or Path(_config.palace_path).name or "default"
+                palace = PalaceRef(id=palace_id, local_path=_config.palace_path)
+                _collection_cache = backend.get_collection(
+                    palace=palace,
+                    collection_name=_config.collection_name,
+                    create=create,
+                )
+                _metadata_cache = None
+                _metadata_cache_time = 0
+            return _collection_cache
+        except Exception:
+            return None
+
     try:
         client = _get_client()
         if create:
