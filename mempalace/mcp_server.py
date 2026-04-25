@@ -76,6 +76,7 @@ from .palace_graph import (  # noqa: E402
 )
 
 from .knowledge_graph import KnowledgeGraph  # noqa: E402
+from .context_builder import build_context  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(message)s", stream=sys.stderr)
 logger = logging.getLogger("mempalace_mcp")
@@ -1286,6 +1287,308 @@ def tool_reconnect():
         return {"success": False, "error": str(e)}
 
 
+# ==================== CONTEXT / TIMELINE / RECENT / EXPLAIN / HEALTH / BULK ====================
+
+
+def tool_context(
+    query: str,
+    wing: str = None,
+    max_drawers: int = 5,
+    max_triples: int = 20,
+):
+    """Build a structured context block from KG facts + relevant drawers + recent activity."""
+    if not query or not isinstance(query, str) or not query.strip():
+        return {"error": "query is required"}
+    try:
+        wing = _sanitize_optional_name(wing, "wing")
+    except ValueError as e:
+        return {"error": str(e)}
+    max_drawers = max(1, min(int(max_drawers), _MAX_RESULTS))
+    max_triples = max(1, min(int(max_triples), _MAX_RESULTS))
+
+    sanitized = sanitize_query(query)
+    clean_query = sanitized["clean_query"]
+
+    col = _get_collection()
+    if not col:
+        return _no_palace()
+
+    def _search_fn(q, *, wing=None, n_results=5, **_kwargs):
+        return search_memories(
+            q,
+            palace_path=_config.palace_path,
+            wing=wing,
+            n_results=n_results,
+        )
+
+    try:
+        result = build_context(
+            clean_query,
+            kg=_get_kg(),
+            search_fn=_search_fn,
+            collection=col,
+            max_triples=max_triples,
+            max_drawers=max_drawers,
+            wing=wing,
+        )
+    except Exception as e:
+        logger.exception("tool_context failed")
+        return {"error": str(e)}
+
+    if sanitized["was_sanitized"]:
+        result["query_sanitized"] = True
+        result["sanitizer"] = {
+            "method": sanitized["method"],
+            "clean_query": clean_query,
+        }
+    return result
+
+
+def tool_timeline(
+    wing: str = None,
+    from_date: str = None,
+    to_date: str = None,
+    limit: int = 20,
+):
+    """List drawers filtered by occurred_at date range, sorted descending."""
+    try:
+        wing = _sanitize_optional_name(wing, "wing")
+    except ValueError as e:
+        return {"error": str(e)}
+    limit = max(1, min(int(limit), _MAX_RESULTS))
+
+    col = _get_collection()
+    if not col:
+        return _no_palace()
+
+    conditions = []
+    if wing:
+        conditions.append({"wing": wing})
+    occurred_clause = {}
+    if from_date:
+        occurred_clause["$gte"] = from_date
+    if to_date:
+        occurred_clause["$lte"] = to_date
+    if occurred_clause:
+        conditions.append({"occurred_at": occurred_clause})
+
+    where = None
+    if len(conditions) == 1:
+        where = conditions[0]
+    elif len(conditions) > 1:
+        where = {"$and": conditions}
+
+    try:
+        kwargs = {
+            "include": ["documents", "metadatas"],
+            "limit": max(limit * 4, 100),
+        }
+        if where:
+            kwargs["where"] = where
+        result = col.get(**kwargs)
+
+        rows = []
+        for i, did in enumerate(result.get("ids", []) or []):
+            meta = (result.get("metadatas") or [{}])[i] or {}
+            doc = (result.get("documents") or [""])[i] or ""
+            rows.append(
+                {
+                    "drawer_id": did,
+                    "wing": meta.get("wing", ""),
+                    "room": meta.get("room", ""),
+                    "occurred_at": meta.get("occurred_at", ""),
+                    "text_preview": doc[:200] + "..." if len(doc) > 200 else doc,
+                }
+            )
+
+        rows.sort(key=lambda r: r.get("occurred_at") or "", reverse=True)
+        rows = rows[:limit]
+        return {
+            "entries": rows,
+            "count": len(rows),
+            "wing": wing or "all",
+            "from_date": from_date,
+            "to_date": to_date,
+        }
+    except Exception as e:
+        logger.exception("tool_timeline failed")
+        return {"error": str(e)}
+
+
+def tool_recent(wing: str = None, limit: int = 20):
+    """Return the most recent drawers (sorted by created_at/filed_at descending)."""
+    try:
+        wing = _sanitize_optional_name(wing, "wing")
+    except ValueError as e:
+        return {"error": str(e)}
+    limit = max(1, min(int(limit), _MAX_RESULTS))
+
+    col = _get_collection()
+    if not col:
+        return _no_palace()
+
+    try:
+        kwargs = {
+            "include": ["documents", "metadatas"],
+            "limit": max(limit * 4, 200),
+        }
+        if wing:
+            kwargs["where"] = {"wing": wing}
+        result = col.get(**kwargs)
+
+        rows = []
+        for i, did in enumerate(result.get("ids", []) or []):
+            meta = (result.get("metadatas") or [{}])[i] or {}
+            doc = (result.get("documents") or [""])[i] or ""
+            ts = meta.get("created_at") or meta.get("filed_at") or ""
+            rows.append(
+                {
+                    "drawer_id": did,
+                    "wing": meta.get("wing", ""),
+                    "room": meta.get("room", ""),
+                    "created_at": ts,
+                    "text_preview": doc[:200] + "..." if len(doc) > 200 else doc,
+                }
+            )
+
+        rows.sort(key=lambda r: r.get("created_at") or "", reverse=True)
+        rows = rows[:limit]
+        return {
+            "entries": rows,
+            "count": len(rows),
+            "wing": wing or "all",
+        }
+    except Exception as e:
+        logger.exception("tool_recent failed")
+        return {"error": str(e)}
+
+
+def tool_explain(query: str, limit: int = 5):
+    """Debug tool: run search and return per-result distance/wing/room/source for ranking inspection."""
+    if not query or not isinstance(query, str) or not query.strip():
+        return {"error": "query is required"}
+    limit = max(1, min(int(limit), _MAX_RESULTS))
+
+    sanitized = sanitize_query(query)
+    clean_query = sanitized["clean_query"]
+
+    try:
+        raw = search_memories(
+            clean_query,
+            palace_path=_config.palace_path,
+            n_results=limit,
+        )
+    except Exception as e:
+        logger.exception("tool_explain search failed")
+        return {"error": str(e)}
+
+    explained = []
+    for r in raw.get("results", []) or []:
+        text = r.get("content") or r.get("document") or ""
+        explained.append(
+            {
+                "drawer_id": r.get("id") or r.get("drawer_id"),
+                "text_preview": text[:200] + "..." if len(text) > 200 else text,
+                "distance": r.get("distance"),
+                "similarity": r.get("similarity"),
+                "wing": r.get("wing", ""),
+                "room": r.get("room", ""),
+                "source_file": r.get("source_file", ""),
+            }
+        )
+    out = {
+        "query": clean_query,
+        "results": explained,
+        "count": len(explained),
+    }
+    if sanitized["was_sanitized"]:
+        out["query_sanitized"] = True
+    return out
+
+
+def tool_health():
+    """System health check: backend type, collection count, KG stats, pgvector pool stats."""
+    backend_name = os.environ.get("MEMPALACE_BACKEND", "chroma")
+    health = {
+        "backend": backend_name,
+        "palace_path": _config.palace_path,
+        "version": __version__,
+    }
+
+    try:
+        col = _get_collection()
+        if col is not None:
+            try:
+                health["collection_count"] = col.count()
+            except Exception as e:
+                health["collection_count_error"] = str(e)
+        else:
+            health["collection"] = "unavailable"
+    except Exception as e:
+        health["collection_error"] = str(e)
+
+    try:
+        health["kg_stats"] = _get_kg().stats()
+    except Exception as e:
+        health["kg_error"] = str(e)
+
+    if _is_pgvector_backend():
+        try:
+            backend = get_backend(backend_name)
+            pool = getattr(backend, "_pool", None)
+            if pool is not None and hasattr(pool, "get_stats"):
+                health["pgvector_pool"] = pool.get_stats()
+        except Exception as e:
+            health["pgvector_pool_error"] = str(e)
+
+    return health
+
+
+def tool_bulk_add(items: list = None):
+    """Batch-add drawers. Each item: {wing, room, content, source_file?}."""
+    if not items or not isinstance(items, list):
+        return {"success": False, "error": "items must be a non-empty list"}
+
+    added = []
+    skipped = []
+    errors = []
+    for idx, item in enumerate(items):
+        if not isinstance(item, dict):
+            errors.append({"index": idx, "error": "item must be an object"})
+            continue
+        wing = item.get("wing")
+        room = item.get("room")
+        content = item.get("content")
+        source_file = item.get("source_file")
+        if not wing or not room or not content:
+            errors.append({"index": idx, "error": "wing, room, and content are required"})
+            continue
+        result = tool_add_drawer(
+            wing=wing,
+            room=room,
+            content=content,
+            source_file=source_file,
+            added_by="mcp_bulk",
+        )
+        if result.get("success"):
+            if result.get("reason") == "already_exists":
+                skipped.append(result.get("drawer_id"))
+            else:
+                added.append(result.get("drawer_id"))
+        else:
+            errors.append({"index": idx, "error": result.get("error", "unknown")})
+
+    return {
+        "success": True,
+        "added_count": len(added),
+        "skipped_count": len(skipped),
+        "error_count": len(errors),
+        "added": added,
+        "skipped": skipped,
+        "errors": errors,
+    }
+
+
 # ==================== MCP PROTOCOL ====================
 
 TOOLS = {
@@ -1711,6 +2014,137 @@ TOOLS = {
             "properties": {},
         },
         "handler": tool_reconnect,
+    },
+    "mempalace_context": {
+        "description": (
+            "Build a structured context block from KG facts + relevant drawers + recent activity."
+            " Use to wake up with everything you need to answer a query."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Natural-language query to build context around",
+                },
+                "wing": {
+                    "type": "string",
+                    "description": "Optional wing filter for search/recent drawers",
+                },
+                "max_drawers": {
+                    "type": "integer",
+                    "description": "Max relevant drawers to include (default 5)",
+                    "minimum": 1,
+                    "maximum": 100,
+                },
+                "max_triples": {
+                    "type": "integer",
+                    "description": "Max KG facts to include (default 20)",
+                    "minimum": 1,
+                    "maximum": 100,
+                },
+            },
+            "required": ["query"],
+        },
+        "handler": tool_context,
+    },
+    "mempalace_timeline": {
+        "description": (
+            "List drawers within a date range filtered by occurred_at. Sorted newest first."
+            " Use to see when things happened, not when they were filed."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "wing": {"type": "string", "description": "Optional wing filter"},
+                "from_date": {
+                    "type": "string",
+                    "description": "Start of range, ISO 8601 (inclusive). Optional.",
+                },
+                "to_date": {
+                    "type": "string",
+                    "description": "End of range, ISO 8601 (inclusive). Optional.",
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Max results (default 20)",
+                    "minimum": 1,
+                    "maximum": 100,
+                },
+            },
+        },
+        "handler": tool_timeline,
+    },
+    "mempalace_recent": {
+        "description": "Most recently filed drawers, sorted by created_at descending.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "wing": {"type": "string", "description": "Optional wing filter"},
+                "limit": {
+                    "type": "integer",
+                    "description": "Max results (default 20)",
+                    "minimum": 1,
+                    "maximum": 100,
+                },
+            },
+        },
+        "handler": tool_recent,
+    },
+    "mempalace_explain": {
+        "description": (
+            "Debug tool. Runs search and returns per-result distance, wing, room, and source for"
+            " inspecting ranking decisions."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "description": "Search query to explain"},
+                "limit": {
+                    "type": "integer",
+                    "description": "Max results (default 5)",
+                    "minimum": 1,
+                    "maximum": 100,
+                },
+            },
+            "required": ["query"],
+        },
+        "handler": tool_explain,
+    },
+    "mempalace_health": {
+        "description": (
+            "System health check: backend type, collection count, KG stats, pgvector pool stats"
+            " when applicable."
+        ),
+        "input_schema": {"type": "object", "properties": {}},
+        "handler": tool_health,
+    },
+    "mempalace_bulk_add": {
+        "description": (
+            "Batch-file multiple verbatim drawers in one call. Each item must have wing, room,"
+            " and content; source_file is optional. Idempotent on duplicate IDs."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "description": "List of {wing, room, content, source_file?} objects",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "wing": {"type": "string"},
+                            "room": {"type": "string"},
+                            "content": {"type": "string"},
+                            "source_file": {"type": "string"},
+                        },
+                        "required": ["wing", "room", "content"],
+                    },
+                },
+            },
+            "required": ["items"],
+        },
+        "handler": tool_bulk_add,
     },
 }
 
