@@ -1,0 +1,2394 @@
+{
+  "benchmark": "closet_benchmark",
+  "timestamp": "2026-04-25T02:12:03-0500",
+  "config": {
+    "n_results": 10,
+    "over_fetch_factor": 3,
+    "total_queries": 50,
+    "drawer_count": 342751,
+    "closet_count": 506,
+    "embedder": "gemini-embedding-2",
+    "embed_time_seconds": 1.0
+  },
+  "aggregate": {
+    "mean_overlap_at_5": 4.64,
+    "mean_overlap_at_5_pct": 92.8,
+    "mean_overlap_at_10": 9.28,
+    "mean_overlap_at_10_pct": 92.8,
+    "mean_top3_overlap": 2.76,
+    "top1_agreement": 46,
+    "top1_agreement_pct": 92.0,
+    "mean_kendall_tau": 0.973,
+    "queries_with_closet_boost": 20,
+    "total_boosted_results": 58,
+    "total_closet_unique_results": 36,
+    "total_no_closet_unique_results": 36,
+    "closets_helped": 17,
+    "closets_hurt": 0,
+    "closets_neutral": 33,
+    "recommendation": "DELETE",
+    "rationale": "Closets produce nearly identical results to drawer-only search. The tsvector+RRF hybrid search captures the keyword signals that closets were designed to provide. Removing closets saves storage and eliminates the closet query overhead."
+  },
+  "per_category": {
+    "people": {
+      "count": 10,
+      "mean_overlap_at_5": 5.0,
+      "mean_overlap_at_10": 9.9,
+      "mean_kendall_tau": 0.983,
+      "closets_helped": 0,
+      "closets_hurt": 0,
+      "closets_neutral": 10,
+      "boosted_total": 0
+    },
+    "project": {
+      "count": 10,
+      "mean_overlap_at_5": 4.1,
+      "mean_overlap_at_10": 8.4,
+      "mean_kendall_tau": 0.97,
+      "closets_helped": 7,
+      "closets_hurt": 0,
+      "closets_neutral": 3,
+      "boosted_total": 22
+    },
+    "temporal": {
+      "count": 10,
+      "mean_overlap_at_5": 4.7,
+      "mean_overlap_at_10": 9.0,
+      "mean_kendall_tau": 0.971,
+      "closets_helped": 5,
+      "closets_hurt": 0,
+      "closets_neutral": 5,
+      "boosted_total": 19
+    },
+    "concept": {
+      "count": 10,
+      "mean_overlap_at_5": 4.5,
+      "mean_overlap_at_10": 9.1,
+      "mean_kendall_tau": 0.969,
+      "closets_helped": 5,
+      "closets_hurt": 0,
+      "closets_neutral": 5,
+      "boosted_total": 13
+    },
+    "exact": {
+      "count": 10,
+      "mean_overlap_at_5": 4.9,
+      "mean_overlap_at_10": 10.0,
+      "mean_kendall_tau": 0.973,
+      "closets_helped": 0,
+      "closets_hurt": 0,
+      "closets_neutral": 10,
+      "boosted_total": 4
+    }
+  },
+  "per_query": [
+    {
+      "query": "what does Max do",
+      "category": "people",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:4554",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:1537",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a3013f59582907669.jsonl:1443",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:4013",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:1098",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:5643",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:2705",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:5792",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1317",
+        "session://f61c892c-2af9-4fd9-a514-b332929fb92b.jsonl:364"
+      ],
+      "without_closets_ids": [
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:4554",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:1537",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a3013f59582907669.jsonl:1443",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:4013",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:1098",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:5643",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:2705",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:5792",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1317",
+        "session://f61c892c-2af9-4fd9-a514-b332929fb92b.jsonl:364"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "who is Justin",
+      "category": "people",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://871c1902-6f37-4477-88cd-e08b0a0440a4.jsonl:477",
+        "session://871c1902-6f37-4477-88cd-e08b0a0440a4.jsonl:504",
+        "session://871c1902-6f37-4477-88cd-e08b0a0440a4.jsonl:489",
+        "session://871c1902-6f37-4477-88cd-e08b0a0440a4.jsonl:490",
+        "session://871c1902-6f37-4477-88cd-e08b0a0440a4.jsonl:470",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:2",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:4925",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a6af88331db0ca78c.jsonl:73",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:3207",
+        "local://redacted"
+      ],
+      "without_closets_ids": [
+        "session://871c1902-6f37-4477-88cd-e08b0a0440a4.jsonl:477",
+        "session://871c1902-6f37-4477-88cd-e08b0a0440a4.jsonl:504",
+        "session://871c1902-6f37-4477-88cd-e08b0a0440a4.jsonl:489",
+        "session://871c1902-6f37-4477-88cd-e08b0a0440a4.jsonl:490",
+        "session://871c1902-6f37-4477-88cd-e08b0a0440a4.jsonl:470",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:2",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:4925",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a6af88331db0ca78c.jsonl:73",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:3207",
+        "local://redacted"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "Alice's daughter",
+      "category": "people",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 9,
+        "k": 10
+      },
+      "closet_unique_count": 1,
+      "no_closet_unique_count": 1,
+      "kendall_tau": 0.833,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 2,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:5256",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:1122",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3/subagents/agent-a3ed9b11b1aafa428.jsonl:3216",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a4948f9db7cd7fd52.jsonl:1441",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a4948f9db7cd7fd52.jsonl:1665",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-acdd1569868779920.jsonl:4954",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8/subagents/agent-af72a97cf93fefeba.jsonl:2102",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8/subagents/agent-af72a97cf93fefeba.jsonl:569",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-acdd1569868779920.jsonl:5479",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5fe09258a025cfa5.jsonl:830"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:5256",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:1122",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a4948f9db7cd7fd52.jsonl:1441",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a4948f9db7cd7fd52.jsonl:1665",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3/subagents/agent-a3ed9b11b1aafa428.jsonl:3216",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-acdd1569868779920.jsonl:4954",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8/subagents/agent-af72a97cf93fefeba.jsonl:569",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8/subagents/agent-af72a97cf93fefeba.jsonl:2102",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ab02068344e3461f1.jsonl:767",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-acdd1569868779920.jsonl:5479"
+      ],
+      "closet_unique_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5fe09258a025cfa5.jsonl:830"
+      ],
+      "no_closet_unique_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ab02068344e3461f1.jsonl:767"
+      ]
+    },
+    {
+      "query": "who works on the memory system",
+      "category": "people",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8352",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8345",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:18",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:19",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a6c4b273400933292.jsonl:272",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:46",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20003",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:15",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8286",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8312"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8352",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8345",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:18",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:19",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a6c4b273400933292.jsonl:272",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:46",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20003",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:15",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8286",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8312"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "tell me about Sasha",
+      "category": "people",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:41706",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-afdee52b5c4b55311.jsonl:1362",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:14324",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20640",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:3249",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:3397",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:19801",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:7187",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:8310",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:3563"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:41706",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-afdee52b5c4b55311.jsonl:1362",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:14324",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20640",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:3249",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:3397",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:19801",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:7187",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:8310",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:3563"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "what did the team decide",
+      "category": "people",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:310",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:29779",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:40608",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:40422",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:35894",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:35794",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:36893",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:38685",
+        "session://b27a25ce-16b7-457e-a98a-ea938b4ceda3.jsonl:1198",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:35499"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:310",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:29779",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:40608",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:40422",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:35894",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:35794",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:36893",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:38685",
+        "session://b27a25ce-16b7-457e-a98a-ea938b4ceda3.jsonl:1198",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:35499"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "who built the embeddings pipeline",
+      "category": "people",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a653226cd2e1fe360.jsonl:43",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a845dcab22a344a86.jsonl:57",
+        "session://740b3979-4c9f-4016-80ab-88f091e4e80d.jsonl:115",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-aa09c4c93e7f0d493.jsonl:40",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-ad471b2e4ea246687.jsonl:40",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:488",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:949",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:48",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1536",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:49"
+      ],
+      "without_closets_ids": [
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a653226cd2e1fe360.jsonl:43",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a845dcab22a344a86.jsonl:57",
+        "session://740b3979-4c9f-4016-80ab-88f091e4e80d.jsonl:115",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-aa09c4c93e7f0d493.jsonl:40",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-ad471b2e4ea246687.jsonl:40",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:488",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:949",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:48",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1536",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:49"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "conversations with clients",
+      "category": "people",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://b27a25ce-16b7-457e-a98a-ea938b4ceda3.jsonl:826",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:11394",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:11948",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:824",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:26587",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:32946",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:24109",
+        "session://f61c892c-2af9-4fd9-a514-b332929fb92b.jsonl:1257",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:9623",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:7814"
+      ],
+      "without_closets_ids": [
+        "session://b27a25ce-16b7-457e-a98a-ea938b4ceda3.jsonl:826",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:11394",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:11948",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:824",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:26587",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:32946",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:24109",
+        "session://f61c892c-2af9-4fd9-a514-b332929fb92b.jsonl:1257",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:9623",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:7814"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "who manages the project",
+      "category": "people",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "local://redacted",
+        "local://redacted",
+        "local://redacted",
+        "local://redacted",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-acab624ed7cdbc0de.jsonl:486",
+        "local://redacted",
+        "local://redacted",
+        "local://redacted",
+        "local://redacted",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:478"
+      ],
+      "without_closets_ids": [
+        "local://redacted",
+        "local://redacted",
+        "local://redacted",
+        "local://redacted",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-acab624ed7cdbc0de.jsonl:486",
+        "local://redacted",
+        "local://redacted",
+        "local://redacted",
+        "local://redacted",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:478"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "developer feedback on the product",
+      "category": "people",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:11291",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3/subagents/agent-a8f16f46f0dcb4159.jsonl:5",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:23917",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:2139",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:977",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3/subagents/agent-ada99a61ed44750e5.jsonl:37",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:13531",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a7419d1899c18eac8.jsonl:172",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:12977",
+        "session://0e305f82-f6b5-46b4-bf38-a52d14f9e01f.jsonl:293"
+      ],
+      "without_closets_ids": [
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:11291",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3/subagents/agent-a8f16f46f0dcb4159.jsonl:5",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:23917",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:2139",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:977",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3/subagents/agent-ada99a61ed44750e5.jsonl:37",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:13531",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a7419d1899c18eac8.jsonl:172",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:12977",
+        "session://0e305f82-f6b5-46b4-bf38-a52d14f9e01f.jsonl:293"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "chromadb crash",
+      "category": "project",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 1,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "local://redacted",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:30",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:121",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:8",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:11",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:14",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:1",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:101",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:20",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:120"
+      ],
+      "without_closets_ids": [
+        "local://redacted",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:30",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:121",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:8",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:11",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:14",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:1",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:101",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:20",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a56773033bde348fa.jsonl:120"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "pgvector migration",
+      "category": "project",
+      "overlap_at_5": {
+        "common": 4,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 0.956,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a7419d1899c18eac8.jsonl:239",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:18463",
+        "local://redacted",
+        "local://redacted",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19921",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6453",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6302",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19765",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19835",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19772"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a7419d1899c18eac8.jsonl:239",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:18463",
+        "local://redacted",
+        "local://redacted",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6453",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19921",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6302",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19765",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19835",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19772"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "auto trade strategy",
+      "category": "project",
+      "overlap_at_5": {
+        "common": 3,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 5,
+        "k": 10
+      },
+      "closet_unique_count": 5,
+      "no_closet_unique_count": 5,
+      "kendall_tau": 1.0,
+      "boosted_results": 6,
+      "top1_same": true,
+      "top3_overlap": 2,
+      "with_closets_ids": [
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:12213",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:12166",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:105",
+        "session://0e305f82-f6b5-46b4-bf38-a52d14f9e01f.jsonl:231",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:9652",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:4149",
+        "session://0e305f82-f6b5-46b4-bf38-a52d14f9e01f.jsonl:167",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:1725",
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:512",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:12698"
+      ],
+      "without_closets_ids": [
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:12213",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:12166",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:9652",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:4149",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:1725",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:14114",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:13648",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:28239",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:26548",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:14192"
+      ],
+      "closet_unique_ids": [
+        "session://0e305f82-f6b5-46b4-bf38-a52d14f9e01f.jsonl:167",
+        "session://0e305f82-f6b5-46b4-bf38-a52d14f9e01f.jsonl:231",
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:512",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:105",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:12698"
+      ],
+      "no_closet_unique_ids": [
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:13648",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:14114",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:14192",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:26548",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:28239"
+      ]
+    },
+    {
+      "query": "MCP server implementation",
+      "category": "project",
+      "overlap_at_5": {
+        "common": 3,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 7,
+        "k": 10
+      },
+      "closet_unique_count": 3,
+      "no_closet_unique_count": 3,
+      "kendall_tau": 0.905,
+      "boosted_results": 4,
+      "top1_same": false,
+      "top3_overlap": 1,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a8008e13a171d9be2.jsonl:94",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:1715",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ae4c50ecaeaca91ad.jsonl:76",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:20789",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:29281",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5692",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ae4c50ecaeaca91ad.jsonl:73",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a8008e13a171d9be2.jsonl:95",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:262",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5529"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:1715",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:29281",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:20789",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5692",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ae4c50ecaeaca91ad.jsonl:73",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:262",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:29266",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5529",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ae16822e717fba69a.jsonl:176",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:29308"
+      ],
+      "closet_unique_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a8008e13a171d9be2.jsonl:94",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a8008e13a171d9be2.jsonl:95",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ae4c50ecaeaca91ad.jsonl:76"
+      ],
+      "no_closet_unique_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:29266",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:29308",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ae16822e717fba69a.jsonl:176"
+      ]
+    },
+    {
+      "query": "hook scripts for Claude Code",
+      "category": "project",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 9,
+        "k": 10
+      },
+      "closet_unique_count": 1,
+      "no_closet_unique_count": 1,
+      "kendall_tau": 1.0,
+      "boosted_results": 1,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://348e848e-422e-465d-a2c6-c9d20a7766b2.jsonl:66",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:1329",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:9332",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:15574",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:42094",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:6519",
+        "local://redacted",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:13523",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:71",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:15452"
+      ],
+      "without_closets_ids": [
+        "session://348e848e-422e-465d-a2c6-c9d20a7766b2.jsonl:66",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:1329",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:9332",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:15574",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:42094",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:6519",
+        "local://redacted",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:13523",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:71",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:13112"
+      ],
+      "closet_unique_ids": [
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:15452"
+      ],
+      "no_closet_unique_ids": [
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:13112"
+      ]
+    },
+    {
+      "query": "entity detection pipeline",
+      "category": "project",
+      "overlap_at_5": {
+        "common": 4,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 9,
+        "k": 10
+      },
+      "closet_unique_count": 1,
+      "no_closet_unique_count": 1,
+      "kendall_tau": 0.889,
+      "boosted_results": 2,
+      "top1_same": false,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:2",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:106",
+        "local://redacted",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a0d0cd62b45cdf2ef.jsonl:231",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:225",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:119",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:215",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:217",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:93",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:216"
+      ],
+      "without_closets_ids": [
+        "local://redacted",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:2",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:106",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:227",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:225",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:119",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:215",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:217",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:93",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:216"
+      ],
+      "closet_unique_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a0d0cd62b45cdf2ef.jsonl:231"
+      ],
+      "no_closet_unique_ids": [
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:227"
+      ]
+    },
+    {
+      "query": "knowledge graph triples",
+      "category": "project",
+      "overlap_at_5": {
+        "common": 3,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 7,
+        "k": 10
+      },
+      "closet_unique_count": 3,
+      "no_closet_unique_count": 3,
+      "kendall_tau": 1.0,
+      "boosted_results": 5,
+      "top1_same": false,
+      "top3_overlap": 2,
+      "with_closets_ids": [
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:185",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:181",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a0d0cd62b45cdf2ef.jsonl:2",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a0d0cd62b45cdf2ef.jsonl:236",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8367",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a0d0cd62b45cdf2ef.jsonl:224",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:9949",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8194",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a95a9b7f54a59f130.jsonl:223",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a0d0cd62b45cdf2ef.jsonl:239"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a8e2b456db4b53d2d.jsonl:306",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:185",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:181",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a0d0cd62b45cdf2ef.jsonl:2",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8098",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8367",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a0d0cd62b45cdf2ef.jsonl:224",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:9949",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8194",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a05646e563754d273.jsonl:215"
+      ],
+      "closet_unique_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a0d0cd62b45cdf2ef.jsonl:236",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a0d0cd62b45cdf2ef.jsonl:239",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a95a9b7f54a59f130.jsonl:223"
+      ],
+      "no_closet_unique_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8098",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a05646e563754d273.jsonl:215",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a8e2b456db4b53d2d.jsonl:306"
+      ]
+    },
+    {
+      "query": "BM25 hybrid search",
+      "category": "project",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 0.956,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6589",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20057",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19989",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6521",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19985",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6517",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6520",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19988",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20048",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6580"
+      ],
+      "without_closets_ids": [
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6589",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20057",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19989",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6521",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19985",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6517",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6520",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19988",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6580",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20048"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "closet compression format",
+      "category": "project",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 9,
+        "k": 10
+      },
+      "closet_unique_count": 1,
+      "no_closet_unique_count": 1,
+      "kendall_tau": 1.0,
+      "boosted_results": 1,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:94",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:98",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:181",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:102",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:12884",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:8454",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-acdd1569868779920.jsonl:1361",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:29263",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-ac2c792e11d5f4983.jsonl:22",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1294"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:94",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:98",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:181",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:102",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:12884",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:8454",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-acdd1569868779920.jsonl:1361",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:29263",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-ac2c792e11d5f4983.jsonl:22",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:20649"
+      ],
+      "closet_unique_ids": [
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1294"
+      ],
+      "no_closet_unique_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:20649"
+      ]
+    },
+    {
+      "query": "palace repair tool",
+      "category": "project",
+      "overlap_at_5": {
+        "common": 4,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 8,
+        "k": 10
+      },
+      "closet_unique_count": 2,
+      "no_closet_unique_count": 2,
+      "kendall_tau": 1.0,
+      "boosted_results": 2,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:215",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5427",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:7423",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5860",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:7414",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:7460",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5384",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:555",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:282",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:587"
+      ],
+      "without_closets_ids": [
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:215",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5427",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:7423",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5860",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:26",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:25",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:7414",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:7460",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5384",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:282"
+      ],
+      "closet_unique_ids": [
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:555",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:587"
+      ],
+      "no_closet_unique_ids": [
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:25",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:26"
+      ]
+    },
+    {
+      "query": "what happened recently",
+      "category": "temporal",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 9,
+        "k": 10
+      },
+      "closet_unique_count": 1,
+      "no_closet_unique_count": 1,
+      "kendall_tau": 0.944,
+      "boosted_results": 2,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:4603",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:11863",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1317",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:2784",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:19188",
+        "session://b27a25ce-16b7-457e-a98a-ea938b4ceda3.jsonl:994",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:26977",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:6891",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:31509",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:4182"
+      ],
+      "without_closets_ids": [
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:4603",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:11863",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1317",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:19188",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:2784",
+        "session://b27a25ce-16b7-457e-a98a-ea938b4ceda3.jsonl:994",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:26977",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:6891",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:31296",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:31509"
+      ],
+      "closet_unique_ids": [
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:4182"
+      ],
+      "no_closet_unique_ids": [
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:31296"
+      ]
+    },
+    {
+      "query": "recent decisions about architecture",
+      "category": "temporal",
+      "overlap_at_5": {
+        "common": 4,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 9,
+        "k": 10
+      },
+      "closet_unique_count": 1,
+      "no_closet_unique_count": 1,
+      "kendall_tau": 1.0,
+      "boosted_results": 1,
+      "top1_same": true,
+      "top3_overlap": 2,
+      "with_closets_ids": [
+        "local://redacted",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:12951",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:6569",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:81",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ad36625d986de40b4.jsonl:16",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:307",
+        "local://redacted",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:989",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:80",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:271"
+      ],
+      "without_closets_ids": [
+        "local://redacted",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:6568",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:12951",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:6569",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:81",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ad36625d986de40b4.jsonl:16",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:307",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:989",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:80",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:271"
+      ],
+      "closet_unique_ids": [
+        "local://redacted"
+      ],
+      "no_closet_unique_ids": [
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:6568"
+      ]
+    },
+    {
+      "query": "latest changes to the codebase",
+      "category": "temporal",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 9,
+        "k": 10
+      },
+      "closet_unique_count": 1,
+      "no_closet_unique_count": 1,
+      "kendall_tau": 1.0,
+      "boosted_results": 1,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:5654",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:6404",
+        "session://a6602422-9f22-4c3a-b05c-a0276a2fb843.jsonl:105",
+        "session://a6602422-9f22-4c3a-b05c-a0276a2fb843.jsonl:106",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:22649",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:9907",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:27412",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:13577",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:9049",
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:2136"
+      ],
+      "without_closets_ids": [
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:5654",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:6404",
+        "session://a6602422-9f22-4c3a-b05c-a0276a2fb843.jsonl:105",
+        "session://a6602422-9f22-4c3a-b05c-a0276a2fb843.jsonl:106",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:22649",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:9907",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:27412",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:13577",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:25421",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:9049"
+      ],
+      "closet_unique_ids": [
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:2136"
+      ],
+      "no_closet_unique_ids": [
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:25421"
+      ]
+    },
+    {
+      "query": "what was discussed last session",
+      "category": "temporal",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5809",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:55",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5808",
+        "session://f61c892c-2af9-4fd9-a514-b332929fb92b.jsonl:1271",
+        "session://740b3979-4c9f-4016-80ab-88f091e4e80d.jsonl:0",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:78",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:51",
+        "session://740b3979-4c9f-4016-80ab-88f091e4e80d.jsonl:100",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:0",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:3"
+      ],
+      "without_closets_ids": [
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5809",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:55",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:5808",
+        "session://f61c892c-2af9-4fd9-a514-b332929fb92b.jsonl:1271",
+        "session://740b3979-4c9f-4016-80ab-88f091e4e80d.jsonl:0",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:78",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:51",
+        "session://740b3979-4c9f-4016-80ab-88f091e4e80d.jsonl:100",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:0",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:3"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "recent bug fixes",
+      "category": "temporal",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:41234",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:38599",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:35809",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:36882",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:38254",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:39631",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:36563",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:34294",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:34207",
+        "local://redacted"
+      ],
+      "without_closets_ids": [
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:41234",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:38599",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:35809",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:36882",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:38254",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:39631",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:36563",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:34294",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:34207",
+        "local://redacted"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "deployment timeline",
+      "category": "temporal",
+      "overlap_at_5": {
+        "common": 4,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 5,
+        "k": 10
+      },
+      "closet_unique_count": 5,
+      "no_closet_unique_count": 5,
+      "kendall_tau": 1.0,
+      "boosted_results": 8,
+      "top1_same": false,
+      "top3_overlap": 2,
+      "with_closets_ids": [
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:8465",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:159",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:89",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6383",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:91",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:1236",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:160",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:161",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:2169",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:4374"
+      ],
+      "without_closets_ids": [
+        "local://redacted",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:8465",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:159",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:89",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6383",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19852",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:91",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19861",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a290cf41a58273bc2.jsonl:61",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6391"
+      ],
+      "closet_unique_ids": [
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:160",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:161",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:1236",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:2169",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:4374"
+      ],
+      "no_closet_unique_ids": [
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19852",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19861",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6391",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a290cf41a58273bc2.jsonl:61",
+        "local://redacted"
+      ]
+    },
+    {
+      "query": "sprint planning notes",
+      "category": "temporal",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 0.956,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:2673",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:744",
+        "session://58c42876-e385-46cb-8ad5-ccc2427935c2.jsonl:50",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:6683",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:7890",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:8225",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:9602",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:7753",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:8416",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:7956"
+      ],
+      "without_closets_ids": [
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:2673",
+        "session://30fefde7-026a-4d49-8b65-9f043b14febf.jsonl:744",
+        "session://58c42876-e385-46cb-8ad5-ccc2427935c2.jsonl:50",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:6683",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:7890",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:9602",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:8225",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:7753",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:8416",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:7956"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "status update from this week",
+      "category": "temporal",
+      "overlap_at_5": {
+        "common": 4,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 8,
+        "k": 10
+      },
+      "closet_unique_count": 2,
+      "no_closet_unique_count": 2,
+      "kendall_tau": 0.857,
+      "boosted_results": 7,
+      "top1_same": true,
+      "top3_overlap": 2,
+      "with_closets_ids": [
+        "local://redacted",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:6188",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:4213",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:4374",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:11099",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:1960",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:3468",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:4477",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:2636",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:6340"
+      ],
+      "without_closets_ids": [
+        "local://redacted",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:4213",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:4311",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:4374",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:6188",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:11099",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:1960",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:3468",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:6340",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:30089"
+      ],
+      "closet_unique_ids": [
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:2636",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:4477"
+      ],
+      "no_closet_unique_ids": [
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:4311",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:30089"
+      ]
+    },
+    {
+      "query": "most recent conversation",
+      "category": "temporal",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 0.956,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:24206",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:2130",
+        "session://b27a25ce-16b7-457e-a98a-ea938b4ceda3.jsonl:994",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:16575",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:142",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:5202",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:33818",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:4603",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:824",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:7814"
+      ],
+      "without_closets_ids": [
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:24206",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:2130",
+        "session://b27a25ce-16b7-457e-a98a-ea938b4ceda3.jsonl:994",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:142",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:16575",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:5202",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:33818",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:4603",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:824",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:7814"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "progress on current milestone",
+      "category": "temporal",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:7624",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:3951",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:26500",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:3996",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:12752",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:12661",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:13058",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:6291",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:11099",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:4374"
+      ],
+      "without_closets_ids": [
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:7624",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:3951",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:26500",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:3996",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:12752",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:12661",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:13058",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:6291",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:11099",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:4374"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "memory system design",
+      "category": "concept",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:46",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:126",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a15be1e142bfc8615.jsonl:45",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a6c4b273400933292.jsonl:272",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8372",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8390",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:14",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:117",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a6c4b273400933292.jsonl:270"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:46",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:126",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a15be1e142bfc8615.jsonl:45",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a6c4b273400933292.jsonl:272",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8372",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8390",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:14",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:117",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a6c4b273400933292.jsonl:270"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "embedding model choice",
+      "category": "concept",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:617",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:618",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:650",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1165",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:630",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-a335e5971e781e4a9.jsonl:225",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-a335e5971e781e4a9.jsonl:237",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:662",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-a335e5971e781e4a9.jsonl:16",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:78"
+      ],
+      "without_closets_ids": [
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:617",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:618",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:650",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1165",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:630",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-a335e5971e781e4a9.jsonl:225",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-a335e5971e781e4a9.jsonl:237",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:662",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-a335e5971e781e4a9.jsonl:16",
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0.jsonl:78"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "verbatim storage philosophy",
+      "category": "concept",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:6179",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:22561",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:117",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8382",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8364",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3/subagents/agent-a6e15e80f9c37cb4a.jsonl:228",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8372",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:32518",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3/subagents/agent-a6e15e80f9c37cb4a.jsonl:229"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:6179",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:22561",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:117",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8382",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8364",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3/subagents/agent-a6e15e80f9c37cb4a.jsonl:228",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8372",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:32518",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3/subagents/agent-a6e15e80f9c37cb4a.jsonl:229"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "AAAK compression format",
+      "category": "concept",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:94",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:67",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:123",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:102",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8389",
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:3221",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:6698",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:6601",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:2665",
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:1854"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:94",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:67",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:123",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:102",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8389",
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:3221",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:6698",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:6601",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:2665",
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:1854"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "wing room drawer architecture",
+      "category": "concept",
+      "overlap_at_5": {
+        "common": 3,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 5,
+        "k": 10
+      },
+      "closet_unique_count": 5,
+      "no_closet_unique_count": 5,
+      "kendall_tau": 0.8,
+      "boosted_results": 9,
+      "top1_same": true,
+      "top3_overlap": 1,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8364",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:48",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:52",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:117",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:77",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:36",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:51",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:94",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:119"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8364",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8382",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:117",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:244",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:51",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:94",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:7584",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:43",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a0d0cd62b45cdf2ef.jsonl:2"
+      ],
+      "closet_unique_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:119",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:36",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:48",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:52",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:77"
+      ],
+      "no_closet_unique_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8382",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a0d0cd62b45cdf2ef.jsonl:2",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:7584",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:244",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:43"
+      ]
+    },
+    {
+      "query": "privacy by architecture",
+      "category": "concept",
+      "overlap_at_5": {
+        "common": 4,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 9,
+        "k": 10
+      },
+      "closet_unique_count": 1,
+      "no_closet_unique_count": 1,
+      "kendall_tau": 1.0,
+      "boosted_results": 1,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "local://redacted",
+        "local://redacted",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "local://redacted",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:1062",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:989",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8382",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:1076",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a26813e75c9bbd621.jsonl:4",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:2837"
+      ],
+      "without_closets_ids": [
+        "local://redacted",
+        "local://redacted",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:1062",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:989",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8382",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8364",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:1076",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a26813e75c9bbd621.jsonl:4",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:2837"
+      ],
+      "closet_unique_ids": [
+        "local://redacted"
+      ],
+      "no_closet_unique_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8364"
+      ]
+    },
+    {
+      "query": "local-first zero API design",
+      "category": "concept",
+      "overlap_at_5": {
+        "common": 4,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 9,
+        "k": 10
+      },
+      "closet_unique_count": 1,
+      "no_closet_unique_count": 1,
+      "kendall_tau": 0.944,
+      "boosted_results": 1,
+      "top1_same": true,
+      "top3_overlap": 2,
+      "with_closets_ids": [
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:3435",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:9152",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:9462",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a6c4b273400933292.jsonl:282",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1087",
+        "local://redacted",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:4857",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a8008e13a171d9be2.jsonl:203",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a26813e75c9bbd621.jsonl:127"
+      ],
+      "without_closets_ids": [
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:3435",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:11916",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:9152",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:9462",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a6c4b273400933292.jsonl:282",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:4857",
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1087",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a8008e13a171d9be2.jsonl:203",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a26813e75c9bbd621.jsonl:127"
+      ],
+      "closet_unique_ids": [
+        "local://redacted"
+      ],
+      "no_closet_unique_ids": [
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:11916"
+      ]
+    },
+    {
+      "query": "incremental append-only ingest",
+      "category": "concept",
+      "overlap_at_5": {
+        "common": 4,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 9,
+        "k": 10
+      },
+      "closet_unique_count": 1,
+      "no_closet_unique_count": 1,
+      "kendall_tau": 0.944,
+      "boosted_results": 1,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1392",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:1515",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:2292",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:2801",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:25414",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:9042",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:32198",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6366",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:6239",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:3100"
+      ],
+      "without_closets_ids": [
+        "session://af87ee49-47dd-4049-855b-2e8fde31f4f8.jsonl:1392",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:1515",
+        "session://ef984f77-1601-4926-ba89-b7e76a6b46c9.jsonl:2292",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:2801",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:9042",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:25414",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:32198",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6366",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:6239",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:1058"
+      ],
+      "closet_unique_ids": [
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:3100"
+      ],
+      "no_closet_unique_ids": [
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:1058"
+      ]
+    },
+    {
+      "query": "entity disambiguation",
+      "category": "concept",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 9,
+        "k": 10
+      },
+      "closet_unique_count": 1,
+      "no_closet_unique_count": 1,
+      "kendall_tau": 1.0,
+      "boosted_results": 1,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:106",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:4831",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:4313",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:6031",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a3013f59582907669.jsonl:2231",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:15245",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:6317",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:4603",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:24987",
+        "local://redacted"
+      ],
+      "without_closets_ids": [
+        "session://d33f537d-0361-4b46-9d6c-ffd7cf7c81d0/subagents/agent-aeffe4c17fc48a348.jsonl:106",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49.jsonl:4831",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:4313",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:6031",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a3013f59582907669.jsonl:2231",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:15245",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:6317",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:4603",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:24987",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:979"
+      ],
+      "closet_unique_ids": [
+        "local://redacted"
+      ],
+      "no_closet_unique_ids": [
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:979"
+      ]
+    },
+    {
+      "query": "Zettelkasten method of loci",
+      "category": "concept",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:20",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a15be1e142bfc8615.jsonl:117",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:18",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:19",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:94",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8372",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8382",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:117",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8364"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:20",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a15be1e142bfc8615.jsonl:117",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:18",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:19",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:94",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8372",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8382",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:117",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8364"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "100% recall is the design requirement",
+      "category": "exact",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:108",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8377",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8395",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8370",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ae913faa2763f99cf.jsonl:289",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8388",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8382",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:15",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8400"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:108",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8377",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8395",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8370",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ae913faa2763f99cf.jsonl:289",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8388",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8382",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:15",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8400"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "memory is identity",
+      "category": "exact",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 3,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:19",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:118",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:253",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ae913faa2763f99cf.jsonl:289",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:251",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-aab7a1a937deeca1d.jsonl:100",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a3013f59582907669.jsonl:2231",
+        "local://redacted",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a6c4b273400933292.jsonl:270",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a19ded54e45a7b613.jsonl:796"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:19",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:118",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:253",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-ae913faa2763f99cf.jsonl:289",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:251",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-aab7a1a937deeca1d.jsonl:100",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a3013f59582907669.jsonl:2231",
+        "local://redacted",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a6c4b273400933292.jsonl:270",
+        "session://2578fff8-cec0-4384-b04c-1fcf79d5bb49/subagents/agent-a19ded54e45a7b613.jsonl:796"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "ruff check",
+      "category": "exact",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:16019",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:2741",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:4628",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:2574",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:3599",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:23660",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:3862",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:4908",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a6c83a797c440b865.jsonl:814",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:4895"
+      ],
+      "without_closets_ids": [
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:16019",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:2741",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:4628",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:2574",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:3599",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:23660",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:3862",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:4908",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a6c83a797c440b865.jsonl:814",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:4895"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "sanitize_name",
+      "category": "exact",
+      "overlap_at_5": {
+        "common": 4,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 0.956,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:113",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:5256",
+        "session://f61c892c-2af9-4fd9-a514-b332929fb92b.jsonl:3596",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:6885",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:28963",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:4061",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a4948f9db7cd7fd52.jsonl:1665",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a4948f9db7cd7fd52.jsonl:1441",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3/subagents/agent-a3ed9b11b1aafa428.jsonl:3216",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:7614"
+      ],
+      "without_closets_ids": [
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:113",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:5256",
+        "session://f61c892c-2af9-4fd9-a514-b332929fb92b.jsonl:3596",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:6885",
+        "session://ff3d4a88-9585-4ae9-9f0f-c30666172493.jsonl:4061",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:28963",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a4948f9db7cd7fd52.jsonl:1665",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a4948f9db7cd7fd52.jsonl:1441",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3/subagents/agent-a3ed9b11b1aafa428.jsonl:3216",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:7614"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "normalize_version",
+      "category": "exact",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 0.867,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 2,
+      "with_closets_ids": [
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:7917",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:6602",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:22977",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:24292",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:6885",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:16979",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:23387",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:7012",
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:1952",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:11863"
+      ],
+      "without_closets_ids": [
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:7917",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:24292",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:6602",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:22977",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:6885",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:16979",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:7012",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:23387",
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:1952",
+        "session://bb964a87-030f-483f-9250-a13693428cf5.jsonl:11863"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "CLOSET_CHAR_LIMIT",
+      "category": "exact",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 0.956,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:181",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:3546",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:6891",
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:1952",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:7614",
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:3993",
+        "session://f61c892c-2af9-4fd9-a514-b332929fb92b.jsonl:3596",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:2233",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:18637",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:16154"
+      ],
+      "without_closets_ids": [
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:181",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:3546",
+        "session://8d4860eb-2698-40cb-a53a-b0791a88b32e.jsonl:6891",
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:1952",
+        "session://9a2a85a8-35ba-435c-9bba-07b587e0a83c.jsonl:7614",
+        "session://8a73def4-1c6b-47a6-ab5a-834fd2f6501c.jsonl:3993",
+        "session://f61c892c-2af9-4fd9-a514-b332929fb92b.jsonl:3596",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:18637",
+        "session://3d61291e-e366-485a-ac12-dc411f8a4dad.jsonl:2233",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:16154"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "method of loci",
+      "category": "exact",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 1,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:19",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:18",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:20",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:7",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:195",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:15",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a15be1e142bfc8615.jsonl:45",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8372",
+        "local://redacted"
+      ],
+      "without_closets_ids": [
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:19",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:18",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:116",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a5d415aa762bf08b9.jsonl:20",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:7",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:195",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:15",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a15be1e142bfc8615.jsonl:45",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092.jsonl:8372",
+        "local://redacted"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "reciprocal rank fusion",
+      "category": "exact",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 0.956,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:241",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20058",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:47",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6590",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19985",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6517",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19988",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6520",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:243",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6589"
+      ],
+      "without_closets_ids": [
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:241",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20058",
+        "session://95b7f73b-48b4-4fd9-abc4-03a3638b1092/subagents/agent-a04427f5dcc086493.jsonl:47",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6590",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19985",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6517",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6520",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19988",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:243",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6589"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "Okapi BM25",
+      "category": "exact",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:242",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:238",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:239",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6589",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20057",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6583",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:241",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19972",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:240",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:243"
+      ],
+      "without_closets_ids": [
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:242",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:238",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:239",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6589",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20057",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6583",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:241",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19972",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:240",
+        "session://8eba5b0d-733d-4ecc-abc6-5be6de49d1e7/subagents/agent-a963bf992f310eab7.jsonl:243"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    },
+    {
+      "query": "websearch_to_tsquery",
+      "category": "exact",
+      "overlap_at_5": {
+        "common": 5,
+        "k": 5
+      },
+      "overlap_at_10": {
+        "common": 10,
+        "k": 10
+      },
+      "closet_unique_count": 0,
+      "no_closet_unique_count": 0,
+      "kendall_tau": 1.0,
+      "boosted_results": 0,
+      "top1_same": true,
+      "top3_overlap": 3,
+      "with_closets_ids": [
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6557",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19972",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6504",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19971",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19970",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6503",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20035",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6502",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6568",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19973"
+      ],
+      "without_closets_ids": [
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6557",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19972",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6504",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19971",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19970",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6503",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:20035",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6502",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:6568",
+        "session://2aa04e34-5ae9-45df-bab4-d3e4f60037f3.jsonl:19973"
+      ],
+      "closet_unique_ids": [],
+      "no_closet_unique_ids": []
+    }
+  ]
+}
