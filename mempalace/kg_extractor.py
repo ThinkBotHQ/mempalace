@@ -87,8 +87,15 @@ def extract_triples(text: str, model: str = "gpt-5.4-mini") -> list[dict]:
     Returns a list of validated triple dicts with at least ``subject``,
     ``predicate``, and ``object`` keys, plus optional ``valid_from``. Returns
     an empty list on any failure path (no API key, network error, malformed
-    JSON, empty input) — callers should treat extraction as best-effort.
+    JSON, empty input, cloud features disabled) — callers should treat
+    extraction as best-effort.
+
+    Requires MEMPALACE_ALLOW_CLOUD_FEATURES=1 to be set, since this sends
+    user content to an external API. Defaults to OFF for privacy.
     """
+    if not os.environ.get("MEMPALACE_ALLOW_CLOUD_FEATURES"):
+        return []
+
     if not text or not text.strip():
         return []
 

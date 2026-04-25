@@ -186,7 +186,11 @@ class TestResolveOccurredAt:
         )
         assert result == "2024-03-15"
 
-    def test_content_when_no_path_or_jsonl(self, tmp_path):
+    def test_content_date_not_used_in_resolution(self, tmp_path):
+        """Content-based date extraction is excluded from resolve_occurred_at
+        because it returns the earliest date in the text, which is often a
+        historical reference rather than the actual event date. The resolver
+        should fall through to filed_at instead."""
         f = tmp_path / "notes.txt"
         f.write_text("Just some notes.\n")
         result = resolve_occurred_at(
@@ -194,7 +198,7 @@ class TestResolveOccurredAt:
             content="We discussed this on 2025-11-20.",
             filed_at="2026-04-24T12:00:00",
         )
-        assert result == "2025-11-20"
+        assert result == "2026-04-24"
 
     def test_filed_at_fallback(self):
         result = resolve_occurred_at(

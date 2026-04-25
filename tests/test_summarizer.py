@@ -8,13 +8,23 @@ from mempalace import summarizer
 # ── summarize_wing ───────────────────────────────────────────────────
 
 
+def test_summarize_wing_cloud_features_disabled_returns_empty(monkeypatch):
+    """Without MEMPALACE_ALLOW_CLOUD_FEATURES, summarize_wing short-circuits."""
+    monkeypatch.delenv("MEMPALACE_ALLOW_CLOUD_FEATURES", raising=False)
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+    result = summarizer.summarize_wing("justin", ["hello world"])
+    assert result == ""
+
+
 def test_summarize_wing_no_api_key_returns_empty(monkeypatch):
+    monkeypatch.setenv("MEMPALACE_ALLOW_CLOUD_FEATURES", "1")
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     result = summarizer.summarize_wing("justin", ["hello world"])
     assert result == ""
 
 
 def test_summarize_wing_calls_openai_and_returns_content(monkeypatch):
+    monkeypatch.setenv("MEMPALACE_ALLOW_CLOUD_FEATURES", "1")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
 
     fake_response = MagicMock()
@@ -44,6 +54,7 @@ def test_summarize_wing_calls_openai_and_returns_content(monkeypatch):
 
 
 def test_summarize_wing_truncates_long_input(monkeypatch):
+    monkeypatch.setenv("MEMPALACE_ALLOW_CLOUD_FEATURES", "1")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
 
     fake_response = MagicMock()
@@ -65,6 +76,7 @@ def test_summarize_wing_truncates_long_input(monkeypatch):
 
 
 def test_summarize_wing_caps_to_20_samples(monkeypatch):
+    monkeypatch.setenv("MEMPALACE_ALLOW_CLOUD_FEATURES", "1")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
 
     fake_response = MagicMock()
@@ -85,6 +97,7 @@ def test_summarize_wing_caps_to_20_samples(monkeypatch):
 
 
 def test_summarize_wing_swallows_api_errors(monkeypatch, caplog):
+    monkeypatch.setenv("MEMPALACE_ALLOW_CLOUD_FEATURES", "1")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
 
     fake_client = MagicMock()

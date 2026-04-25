@@ -18,7 +18,17 @@ def _fake_completion(content: str) -> MagicMock:
     return response
 
 
+def test_extract_triples_cloud_features_disabled(monkeypatch):
+    """Without MEMPALACE_ALLOW_CLOUD_FEATURES, extract_triples short-circuits."""
+    monkeypatch.delenv("MEMPALACE_ALLOW_CLOUD_FEATURES", raising=False)
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+    with patch.object(kg_extractor, "OpenAI", side_effect=AssertionError("must not call")):
+        result = kg_extractor.extract_triples("Max loves chess.")
+    assert result == []
+
+
 def test_extract_triples_parses_json(monkeypatch):
+    monkeypatch.setenv("MEMPALACE_ALLOW_CLOUD_FEATURES", "1")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
 
     payload = json.dumps(
@@ -58,6 +68,7 @@ def test_extract_triples_parses_json(monkeypatch):
 
 def test_extract_triples_strips_prose_around_json(monkeypatch):
     """LLM sometimes wraps JSON in prose / fences — we tolerate that."""
+    monkeypatch.setenv("MEMPALACE_ALLOW_CLOUD_FEATURES", "1")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
 
     wrapped = (
@@ -77,6 +88,7 @@ def test_extract_triples_strips_prose_around_json(monkeypatch):
 
 
 def test_extract_triples_handles_malformed(monkeypatch):
+    monkeypatch.setenv("MEMPALACE_ALLOW_CLOUD_FEATURES", "1")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
 
     fake_client = MagicMock()
@@ -92,6 +104,7 @@ def test_extract_triples_handles_malformed(monkeypatch):
 
 def test_extract_triples_skips_invalid_entries(monkeypatch):
     """Items missing required fields or with wrong types are dropped silently."""
+    monkeypatch.setenv("MEMPALACE_ALLOW_CLOUD_FEATURES", "1")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
 
     payload = json.dumps(
@@ -127,6 +140,7 @@ def test_extract_triples_no_api_key(monkeypatch):
 
 
 def test_extract_triples_empty_text_short_circuits(monkeypatch):
+    monkeypatch.setenv("MEMPALACE_ALLOW_CLOUD_FEATURES", "1")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
     with patch.object(kg_extractor, "OpenAI", side_effect=AssertionError("must not call")):
         assert kg_extractor.extract_triples("") == []
@@ -134,6 +148,7 @@ def test_extract_triples_empty_text_short_circuits(monkeypatch):
 
 
 def test_extract_triples_swallows_api_errors(monkeypatch, caplog):
+    monkeypatch.setenv("MEMPALACE_ALLOW_CLOUD_FEATURES", "1")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
 
     fake_client = MagicMock()
@@ -148,6 +163,7 @@ def test_extract_triples_swallows_api_errors(monkeypatch, caplog):
 
 
 def test_extract_triples_non_array_root(monkeypatch):
+    monkeypatch.setenv("MEMPALACE_ALLOW_CLOUD_FEATURES", "1")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
     fake_client = MagicMock()
     fake_client.chat.completions.create.return_value = _fake_completion('{"oops": "object"}')

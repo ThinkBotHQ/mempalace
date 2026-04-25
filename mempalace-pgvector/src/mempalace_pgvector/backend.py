@@ -35,7 +35,9 @@ class PgvectorBackend(BaseBackend):
         embedder: Embedder | None = None,
         pool_max: int | None = None,
     ) -> None:
-        self._dsn = dsn or os.environ.get("MEMPALACE_PGVECTOR_DSN") or os.environ.get("DATABASE_URL")
+        self._dsn = (
+            dsn or os.environ.get("MEMPALACE_PGVECTOR_DSN") or os.environ.get("DATABASE_URL")
+        )
         if not self._dsn:
             raise ValueError(
                 "No DSN: set MEMPALACE_PGVECTOR_DSN or DATABASE_URL, "
@@ -71,43 +73,62 @@ class PgvectorBackend(BaseBackend):
         if cache_key in self._collections:
             return self._collections[cache_key]
 
-        conn = self._pool.getconn()
+        # Long-lived collections own their connection. Using ``self._pool``
+        # for these would leak: ``getconn`` is never paired with ``putconn``
+        # and after ``pool_max`` collections the pool wedges. The pool
+        # remains for short-lived health checks and admin queries.
+        conn = psycopg.connect(self._dsn)
 
-        with conn.cursor() as cur:
-            cur.execute(
-                "SELECT id, embedder_name, embedder_dim FROM mp_collections WHERE palace_id = %s AND collection_name = %s",
-                (palace.id, collection_name),
-            )
-            row = cur.fetchone()
-
-        if row is None:
-            if not create:
-                self._pool.putconn(conn)
-                raise PalaceNotFoundError(
-                    f"Collection {collection_name!r} not found in palace {palace.id!r}"
-                )
-            import uuid
-
-            coll_id = uuid.uuid4()
+        try:
             with conn.cursor() as cur:
                 cur.execute(
-                    """
-                    INSERT INTO mp_collections (id, palace_id, namespace, collection_name, embedder_name, embedder_dim)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                    """,
-                    (str(coll_id), palace.id, palace.namespace, collection_name, self._embedder.name, self._embedder.dimension),
+                    "SELECT id, embedder_name, embedder_dim FROM mp_collections WHERE palace_id = %s AND collection_name = %s",
+                    (palace.id, collection_name),
                 )
-            conn.commit()
-        else:
-            coll_id = row[0]
-            stored_name = row[1]
-            if stored_name != self._embedder.name:
-                self._pool.putconn(conn)
-                raise EmbedderIdentityMismatchError(
-                    f"Collection {collection_name!r} was created with embedder {stored_name!r}, "
-                    f"but current embedder is {self._embedder.name!r}. "
-                    f"Re-embedding required to switch models."
-                )
+                row = cur.fetchone()
+
+            if row is None:
+                if not create:
+                    conn.close()
+                    raise PalaceNotFoundError(
+                        f"Collection {collection_name!r} not found in palace {palace.id!r}"
+                    )
+                import uuid
+
+                coll_id = uuid.uuid4()
+                with conn.cursor() as cur:
+                    cur.execute(
+                        """
+                        INSERT INTO mp_collections (id, palace_id, namespace, collection_name, embedder_name, embedder_dim)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        """,
+                        (
+                            str(coll_id),
+                            palace.id,
+                            palace.namespace,
+                            collection_name,
+                            self._embedder.name,
+                            self._embedder.dimension,
+                        ),
+                    )
+                conn.commit()
+            else:
+                coll_id = row[0]
+                stored_name = row[1]
+                if stored_name != self._embedder.name:
+                    conn.close()
+                    raise EmbedderIdentityMismatchError(
+                        f"Collection {collection_name!r} was created with embedder {stored_name!r}, "
+                        f"but current embedder is {self._embedder.name!r}. "
+                        f"Re-embedding required to switch models."
+                    )
+        except Exception:
+            # Defensive: never leak a connection on init failure.
+            try:
+                conn.close()
+            except Exception:
+                pass
+            raise
 
         coll = PgvectorCollection(conn=conn, collection_id=coll_id, embedder=self._embedder)
         self._collections[cache_key] = coll
@@ -117,9 +138,22 @@ class PgvectorBackend(BaseBackend):
         prefix = f"{palace.id}:"
         to_remove = [k for k in self._collections if k.startswith(prefix)]
         for k in to_remove:
-            del self._collections[k]
+            coll = self._collections.pop(k)
+            self._close_collection_conn(coll)
+
+    @staticmethod
+    def _close_collection_conn(coll: PgvectorCollection) -> None:
+        conn = getattr(coll, "_conn", None)
+        if conn is None:
+            return
+        try:
+            conn.close()
+        except Exception:
+            logger.exception("pgvector: failed to close collection connection")
 
     def close(self) -> None:
+        for coll in self._collections.values():
+            self._close_collection_conn(coll)
         self._collections.clear()
         self._pool.close()
 

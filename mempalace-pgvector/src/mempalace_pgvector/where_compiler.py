@@ -24,9 +24,7 @@ from mempalace.backends.base import UnsupportedFilterError
 __all__ = ["compile_where", "UnsupportedFilterError"]
 
 
-_REQUIRED_OPERATORS = frozenset(
-    {"$eq", "$ne", "$in", "$nin", "$and", "$or", "$contains"}
-)
+_REQUIRED_OPERATORS = frozenset({"$eq", "$ne", "$in", "$nin", "$and", "$or", "$contains"})
 _OPTIONAL_OPERATORS = frozenset({"$gt", "$gte", "$lt", "$lte"})
 _SUPPORTED_OPERATORS = _REQUIRED_OPERATORS | _OPTIONAL_OPERATORS
 
@@ -77,9 +75,7 @@ def compile_where(
 
     if where:
         if not isinstance(where, dict):
-            raise UnsupportedFilterError(
-                f"where must be a dict, got {type(where).__name__}"
-            )
+            raise UnsupportedFilterError(f"where must be a dict, got {type(where).__name__}")
         fragments.append(_compile_where_node(where, counter, params))
 
     if where_document:
@@ -99,9 +95,7 @@ def compile_where(
 # ---------------------------------------------------------------------------
 
 
-def _compile_where_node(
-    node: dict, counter: _ParamCounter, params: list
-) -> str:
+def _compile_where_node(node: dict, counter: _ParamCounter, params: list) -> str:
     if not isinstance(node, dict):
         raise UnsupportedFilterError(
             f"where clause must be a dict, got {type(node).__name__}: {node!r}"
@@ -112,9 +106,7 @@ def _compile_where_node(
     clauses: list[str] = []
     for key, value in node.items():
         if key.startswith("$"):
-            clauses.append(
-                _compile_logical(key, value, counter, params, document=False)
-            )
+            clauses.append(_compile_logical(key, value, counter, params, document=False))
         else:
             clauses.append(_compile_field(key, value, counter, params))
 
@@ -153,13 +145,9 @@ def _compile_logical(
     )
 
 
-def _compile_field(
-    field: str, value: Any, counter: _ParamCounter, params: list
-) -> str:
+def _compile_field(field: str, value: Any, counter: _ParamCounter, params: list) -> str:
     if not isinstance(field, str) or not field:
-        raise UnsupportedFilterError(
-            f"metadata key must be a non-empty string, got {field!r}"
-        )
+        raise UnsupportedFilterError(f"metadata key must be a non-empty string, got {field!r}")
 
     if not isinstance(value, dict):
         return _compile_eq(field, value, counter, params, negate=False)
@@ -205,9 +193,7 @@ def _compile_field_operator(
         return _compile_in(field, op, rhs, counter, params)
     if op in _NUMERIC_OPERATORS or op in _SCALAR_OPERATORS:
         return _compile_scalar_cmp(field, op, rhs, counter, params)
-    raise UnsupportedFilterError(
-        f"operator {op!r} cannot be applied directly to field {field!r}"
-    )
+    raise UnsupportedFilterError(f"operator {op!r} cannot be applied directly to field {field!r}")
 
 
 def _compile_eq(
@@ -220,8 +206,7 @@ def _compile_eq(
 ) -> str:
     if isinstance(rhs, dict) or isinstance(rhs, list):
         raise UnsupportedFilterError(
-            f"$eq / $ne on field {field!r} requires a scalar, got "
-            f"{type(rhs).__name__}: {rhs!r}"
+            f"$eq / $ne on field {field!r} requires a scalar, got {type(rhs).__name__}: {rhs!r}"
         )
 
     if rhs is None:
@@ -232,44 +217,44 @@ def _compile_eq(
         return f"(metadata ? {ph} AND jsonb_typeof(metadata->{ph}) = 'null')"
 
     if isinstance(rhs, bool):
+        _escape_key(field)  # validate
+        field_ph = counter.next()
+        params.append(field)
         ph = counter.next()
         params.append(rhs)
         cmp = "<>" if negate else "="
-        return (
-            f"((metadata->'{_escape_key(field)}')::jsonb {cmp} "
-            f"to_jsonb({ph}::boolean))"
-        )
+        return f"((metadata->{field_ph})::jsonb {cmp} to_jsonb({ph}::boolean))"
 
     if isinstance(rhs, (int, float)):
+        _escape_key(field)  # validate
+        field_ph = counter.next()
+        params.append(field)
         ph = counter.next()
         params.append(rhs)
         op = "<>" if negate else "="
-        return f"((metadata->>'{_escape_key(field)}')::numeric {op} {ph}::numeric)"
+        return f"((metadata->>{field_ph})::numeric {op} {ph}::numeric)"
 
     if isinstance(rhs, str):
+        _escape_key(field)  # validate
+        field_ph = counter.next()
+        params.append(field)
         ph = counter.next()
         params.append(rhs)
         op = "<>" if negate else "="
-        return f"(metadata->>'{_escape_key(field)}' {op} {ph})"
+        return f"(metadata->>{field_ph} {op} {ph})"
 
     raise UnsupportedFilterError(
-        f"$eq / $ne on field {field!r} does not support value of type "
-        f"{type(rhs).__name__}: {rhs!r}"
+        f"$eq / $ne on field {field!r} does not support value of type {type(rhs).__name__}: {rhs!r}"
     )
 
 
-def _compile_in(
-    field: str, op: str, rhs: Any, counter: _ParamCounter, params: list
-) -> str:
+def _compile_in(field: str, op: str, rhs: Any, counter: _ParamCounter, params: list) -> str:
     if not isinstance(rhs, list):
         raise UnsupportedFilterError(
-            f"{op!r} on field {field!r} requires a list, got "
-            f"{type(rhs).__name__}: {rhs!r}"
+            f"{op!r} on field {field!r} requires a list, got {type(rhs).__name__}: {rhs!r}"
         )
     if not rhs:
-        raise UnsupportedFilterError(
-            f"{op!r} on field {field!r} requires a non-empty list"
-        )
+        raise UnsupportedFilterError(f"{op!r} on field {field!r} requires a non-empty list")
     for item in rhs:
         if isinstance(item, (dict, list)):
             raise UnsupportedFilterError(
@@ -277,44 +262,52 @@ def _compile_in(
                 f"{type(item).__name__}: {item!r}"
             )
 
-    all_numeric = all(
-        isinstance(x, (int, float)) and not isinstance(x, bool) for x in rhs
-    )
+    _escape_key(field)  # validate
 
+    all_numeric = all(isinstance(x, (int, float)) and not isinstance(x, bool) for x in rhs)
+
+    field_ph = counter.next()
+    params.append(field)
     ph = counter.next()
 
     if all_numeric:
         params.append(list(rhs))
         if op == "$in":
-            return (
-                f"((metadata->>'{_escape_key(field)}')::numeric "
-                f"= ANY({ph}::numeric[]))"
-            )
-        return (
-            f"((metadata->>'{_escape_key(field)}')::numeric "
-            f"<> ALL({ph}::numeric[]))"
-        )
+            return f"((metadata->>{field_ph})::numeric = ANY({ph}::numeric[]))"
+        return f"((metadata->>{field_ph})::numeric <> ALL({ph}::numeric[]))"
 
     params.append([_coerce_text(x) for x in rhs])
     if op == "$in":
-        return f"(metadata->>'{_escape_key(field)}' = ANY({ph}::text[]))"
-    return f"(metadata->>'{_escape_key(field)}' <> ALL({ph}::text[]))"
+        return f"(metadata->>{field_ph} = ANY({ph}::text[]))"
+    return f"(metadata->>{field_ph} <> ALL({ph}::text[]))"
 
 
-def _compile_scalar_cmp(
-    field: str, op: str, rhs: Any, counter: _ParamCounter, params: list
-) -> str:
+def _compile_scalar_cmp(field: str, op: str, rhs: Any, counter: _ParamCounter, params: list) -> str:
+    # String comparisons (e.g. ISO date strings) work lexicographically and
+    # are the canonical way ``tool_timeline`` filters by ``occurred_at``. We
+    # check this BEFORE the numeric guard so a date string like
+    # ``"2026-04-20"`` doesn't get rejected as non-numeric.
+    _escape_key(field)  # validate
+
+    if isinstance(rhs, str):
+        sql_op = _SQL_OP[op]
+        field_ph = counter.next()
+        params.append(field)
+        ph = counter.next()
+        params.append(rhs)
+        return f"(metadata->>{field_ph} {sql_op} {ph})"
+
     if isinstance(rhs, bool) or not isinstance(rhs, (int, float)):
         raise UnsupportedFilterError(
-            f"{op!r} on field {field!r} requires a numeric value, got "
+            f"{op!r} on field {field!r} requires a numeric or string value, got "
             f"{type(rhs).__name__}: {rhs!r}"
         )
     sql_op = _SQL_OP[op]
+    field_ph = counter.next()
+    params.append(field)
     ph = counter.next()
     params.append(rhs)
-    return (
-        f"((metadata->>'{_escape_key(field)}')::numeric {sql_op} {ph}::numeric)"
-    )
+    return f"((metadata->>{field_ph})::numeric {sql_op} {ph}::numeric)"
 
 
 # ---------------------------------------------------------------------------
@@ -322,9 +315,7 @@ def _compile_scalar_cmp(
 # ---------------------------------------------------------------------------
 
 
-def _compile_document_node(
-    node: dict, counter: _ParamCounter, params: list
-) -> str:
+def _compile_document_node(node: dict, counter: _ParamCounter, params: list) -> str:
     if not isinstance(node, dict):
         raise UnsupportedFilterError(
             f"where_document clause must be a dict, got {type(node).__name__}: {node!r}"
@@ -337,9 +328,7 @@ def _compile_document_node(
         if key == "$contains":
             clauses.append(_compile_contains(value, counter, params))
         elif key in ("$and", "$or"):
-            clauses.append(
-                _compile_logical(key, value, counter, params, document=True)
-            )
+            clauses.append(_compile_logical(key, value, counter, params, document=True))
         elif key.startswith("$"):
             if key in _SUPPORTED_OPERATORS:
                 raise UnsupportedFilterError(
@@ -360,9 +349,7 @@ def _compile_document_node(
     return "(" + " AND ".join(clauses) + ")"
 
 
-def _compile_contains(
-    value: Any, counter: _ParamCounter, params: list
-) -> str:
+def _compile_contains(value: Any, counter: _ParamCounter, params: list) -> str:
     if not isinstance(value, str):
         raise UnsupportedFilterError(
             f"$contains requires a string value, got {type(value).__name__}: {value!r}"

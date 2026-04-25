@@ -82,6 +82,45 @@ class PgKnowledgeGraph:
                 finally:
                     self._connection = None
 
+    def rename_entity_references(self, old_id: str, new_id: str) -> int:
+        """Update all triples referencing ``old_id`` to use ``new_id``.
+
+        Mirror of :meth:`mempalace.knowledge_graph.KnowledgeGraph.rename_entity_references`
+        for the PostgreSQL backend. Uses the ``mp_kg_*`` table names and
+        ``%s`` placeholders. Returns the count of triples updated.
+
+        Ensures ``new_id`` exists as an entity row first so the foreign-key
+        constraint on ``mp_kg_triples`` doesn't trip when callers haven't
+        pre-seeded the target. The upsert leaves an existing row untouched.
+        """
+        with self._lock:
+            conn = self._conn()
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO mp_kg_entities (id, name, type)
+                    VALUES (%s, %s, 'unknown')
+                    ON CONFLICT (id) DO NOTHING
+                    """,
+                    (new_id, new_id),
+                )
+                cur.execute(
+                    "UPDATE mp_kg_triples SET subject = %s WHERE subject = %s",
+                    (new_id, old_id),
+                )
+                c1 = cur.rowcount or 0
+                cur.execute(
+                    "UPDATE mp_kg_triples SET object = %s WHERE object = %s",
+                    (new_id, old_id),
+                )
+                c2 = cur.rowcount or 0
+                cur.execute(
+                    "DELETE FROM mp_kg_entities WHERE id = %s",
+                    (old_id,),
+                )
+            conn.commit()
+            return c1 + c2
+
     # ── Schema ────────────────────────────────────────────────────────────
 
     def _init_db(self) -> None:

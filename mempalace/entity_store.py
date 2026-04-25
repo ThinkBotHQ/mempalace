@@ -293,37 +293,29 @@ class EntityStore:
     def _update_kg_references(self, source_id: str, target_id: str) -> int:
         """Update all KG triples that reference *source_id* to point at *target_id*.
 
-        Works with the KnowledgeGraph SQLite schema directly.
-        Returns the number of triples updated.
+        Delegates to the KG implementation's public ``rename_entity_references``
+        method so backend differences (SQLite ``triples`` vs Postgres
+        ``mp_kg_triples``, ``?`` vs ``%s`` placeholders) stay encapsulated in
+        the KG class. Returns the number of triples updated, or 0 if no KG
+        is configured.
         """
-        kg = self._kg
-        count = 0
+        if self._kg is None:
+            return 0
+        rename = getattr(self._kg, "rename_entity_references", None)
+        if rename is None:
+            logger.warning(
+                "entity_store: KG %s has no rename_entity_references method; "
+                "skipping triple rewire after merging %s -> %s",
+                type(self._kg).__name__,
+                source_id,
+                target_id,
+            )
+            return 0
         try:
-            conn = kg._conn()
-            with kg._lock:
-                with conn:
-                    # Update subject references
-                    cur = conn.execute(
-                        "UPDATE triples SET subject = ? WHERE subject = ?",
-                        (target_id, source_id),
-                    )
-                    count += cur.rowcount
-
-                    # Update object references
-                    cur = conn.execute(
-                        "UPDATE triples SET object = ? WHERE object = ?",
-                        (target_id, source_id),
-                    )
-                    count += cur.rowcount
-
-                    # Merge entity rows: delete source, ensure target exists
-                    conn.execute(
-                        "DELETE FROM entities WHERE id = ?",
-                        (source_id,),
-                    )
+            return int(rename(source_id, target_id) or 0)
         except Exception:
             logger.exception("entity_store: failed to update KG references")
-        return count
+            return 0
 
     # ------------------------------------------------------------------
     # Backfill

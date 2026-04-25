@@ -69,7 +69,13 @@ class PgvectorCollection(BaseCollection):
                 VALUES (%s, %s, %s, %s, %s)
                 """,
                 [
-                    (str(self._collection_id), ids[i], documents[i], Jsonb(metadatas[i]), embeddings[i])
+                    (
+                        str(self._collection_id),
+                        ids[i],
+                        documents[i],
+                        Jsonb(metadatas[i]),
+                        embeddings[i],
+                    )
                     for i in range(len(ids))
                 ],
             )
@@ -99,7 +105,13 @@ class PgvectorCollection(BaseCollection):
                     embedding = EXCLUDED.embedding
                 """,
                 [
-                    (str(self._collection_id), ids[i], documents[i], Jsonb(metadatas[i]), embeddings[i])
+                    (
+                        str(self._collection_id),
+                        ids[i],
+                        documents[i],
+                        Jsonb(metadatas[i]),
+                        embeddings[i],
+                    )
                     for i in range(len(ids))
                 ],
             )
@@ -270,18 +282,18 @@ class PgvectorCollection(BaseCollection):
 
         params: list = []
         # vec branch
-        params.append(query_embedding)              # ORDER BY in row_number
-        params.append(str(self._collection_id))     # collection_id =
-        params.extend(filter_params)                # filter (vec)
-        params.append(query_embedding)              # outer ORDER BY for LIMIT
+        params.append(query_embedding)  # ORDER BY in row_number
+        params.append(str(self._collection_id))  # collection_id =
+        params.extend(filter_params)  # filter (vec)
+        params.append(query_embedding)  # outer ORDER BY for LIMIT
         # fts branch
-        params.append(query_text)                   # ts_rank_cd in row_number
-        params.append(str(self._collection_id))     # collection_id =
-        params.append(query_text)                   # @@ websearch_to_tsquery
-        params.extend(filter_params)                # filter (fts)
-        params.append(query_text)                   # outer ORDER BY ts_rank_cd
+        params.append(query_text)  # ts_rank_cd in row_number
+        params.append(str(self._collection_id))  # collection_id =
+        params.append(query_text)  # @@ websearch_to_tsquery
+        params.extend(filter_params)  # filter (fts)
+        params.append(query_text)  # outer ORDER BY ts_rank_cd
         # final join
-        params.append(str(self._collection_id))     # JOIN d.collection_id
+        params.append(str(self._collection_id))  # JOIN d.collection_id
         params.append(n_results)
 
         with self._conn.cursor() as cur:
@@ -298,12 +310,17 @@ class PgvectorCollection(BaseCollection):
         hit_metas: list[dict] = []
         hit_dists: list[float] = []
 
+        # Maximum possible RRF score for 2 sources (vec + fts) with k=60:
+        # each source contributes at most 1/(60+1), so max = 2/61 ~ 0.0328.
+        max_rrf = 2.0 / 61.0
+
         for row in rows:
             hit_ids.append(row[0])
             hit_docs.append(row[1])
             hit_metas.append(row[2])
-            # Convert RRF score to a distance-like scalar where lower = better
-            hit_dists.append(1.0 - float(row[3]))
+            # Normalize RRF score to [0, 1] then convert to distance (lower = better)
+            normalized_score = min(float(row[3]) / max_rrf, 1.0)
+            hit_dists.append(1.0 - normalized_score)
 
         return QueryResult(
             ids=[hit_ids],
@@ -333,7 +350,9 @@ class PgvectorCollection(BaseCollection):
             params.append(ids)
 
         filter_sql, filter_params = compile_where(where, where_document, param_offset=len(params))
-        filter_sql_py, filter_params = _positional_to_pyformat(filter_sql, filter_params, len(params))
+        filter_sql_py, filter_params = _positional_to_pyformat(
+            filter_sql, filter_params, len(params)
+        )
         if filter_sql_py:
             where_clause += f" AND {filter_sql_py}"
             params.extend(filter_params)
@@ -387,7 +406,9 @@ class PgvectorCollection(BaseCollection):
             params.append(ids)
 
         filter_sql, filter_params = compile_where(where, param_offset=len(params))
-        filter_sql_py, filter_params = _positional_to_pyformat(filter_sql, filter_params, len(params))
+        filter_sql_py, filter_params = _positional_to_pyformat(
+            filter_sql, filter_params, len(params)
+        )
         if filter_sql_py:
             where_clause += f" AND {filter_sql_py}"
             params.extend(filter_params)

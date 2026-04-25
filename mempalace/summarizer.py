@@ -21,8 +21,15 @@ def summarize_wing(wing_name: str, sample_texts: list[str], max_words: int = 100
         max_words: Maximum words in summary
 
     Returns:
-        Summary string, or empty string if API unavailable
+        Summary string, or empty string if API unavailable or cloud features disabled
     """
+    if not os.environ.get("MEMPALACE_ALLOW_CLOUD_FEATURES"):
+        logger.debug(
+            "Cloud features disabled. Set MEMPALACE_ALLOW_CLOUD_FEATURES=1 "
+            "to enable wing summaries."
+        )
+        return ""
+
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         return ""

@@ -46,6 +46,7 @@ import argparse  # noqa: E402  (deferred until after stdio protection above)
 import json  # noqa: E402
 import logging  # noqa: E402
 import hashlib  # noqa: E402
+import threading  # noqa: E402
 import time  # noqa: E402
 from datetime import datetime  # noqa: E402
 from pathlib import Path  # noqa: E402
@@ -105,11 +106,16 @@ _config = MempalaceConfig()
 # pgvector users avoid touching the SQLite KG path. When
 # MEMPALACE_BACKEND=pgvector, use PgKnowledgeGraph instead.
 _kg = None
+_kg_lock = threading.Lock()
 
 
 def _get_kg():
     global _kg
-    if _kg is None:
+    if _kg is not None:
+        return _kg
+    with _kg_lock:
+        if _kg is not None:
+            return _kg
         backend_name = os.environ.get("MEMPALACE_BACKEND", "chroma")
         if backend_name == "pgvector":
             from mempalace_pgvector.knowledge_graph import PgKnowledgeGraph
@@ -315,6 +321,87 @@ def _fetch_all_metadata(col, where=None):
 
 def _is_pgvector_backend() -> bool:
     return os.environ.get("MEMPALACE_BACKEND") == "pgvector"
+
+
+def _resolve_pgvector_palace_and_collection() -> tuple[str, str] | None:
+    """Resolve (palace_id, collection_name) for direct SQL paths on pgvector."""
+    try:
+        palace_id = (
+            os.environ.get("MEMPALACE_PALACE_ID") or Path(_config.palace_path).name or "default"
+        )
+        return palace_id, _config.collection_name
+    except Exception:
+        return None
+
+
+def _get_recent_from_sql(
+    wing: str = None,
+    limit: int = 20,
+    *,
+    sort_field: str = "created_at",
+    from_date: str = None,
+    to_date: str = None,
+):
+    """Fetch the most-recent drawers via direct SQL.
+
+    Avoids the ``col.get(limit=...)`` insertion-order pitfall on large palaces
+    where the first N rows are oldest, not newest.
+
+    ``sort_field`` selects either the document row's ``created_at`` timestamp
+    (default) or the metadata ``occurred_at`` ISO string used by the timeline.
+
+    Returns a list of dicts ready for serialization, or None on any failure
+    (in which case callers fall back to the metadata-scan path).
+    """
+    dsn = os.environ.get("MEMPALACE_PGVECTOR_DSN") or os.environ.get("DATABASE_URL")
+    if not dsn:
+        return None
+    try:
+        import psycopg
+    except ImportError:
+        return None
+
+    resolved = _resolve_pgvector_palace_and_collection()
+    if resolved is None:
+        return None
+    palace_id, collection_name = resolved
+
+    if sort_field == "occurred_at":
+        order_expr = "metadata->>'occurred_at'"
+    else:
+        order_expr = "created_at"
+
+    where_parts = [
+        "collection_id = (SELECT id FROM mp_collections "
+        "WHERE palace_id = %s AND collection_name = %s LIMIT 1)"
+    ]
+    params: list = [palace_id, collection_name]
+    if wing:
+        where_parts.append("metadata->>'wing' = %s")
+        params.append(wing)
+    if from_date is not None:
+        where_parts.append("metadata->>'occurred_at' >= %s")
+        params.append(from_date)
+    if to_date is not None:
+        where_parts.append("metadata->>'occurred_at' <= %s")
+        params.append(to_date)
+
+    query = (
+        "SELECT item_id, document, metadata, created_at "
+        "FROM mp_documents WHERE "
+        + " AND ".join(where_parts)
+        + f" ORDER BY {order_expr} DESC NULLS LAST LIMIT %s"
+    )
+    params.append(int(limit))
+
+    try:
+        with psycopg.connect(dsn) as conn:
+            with conn.cursor() as cur:
+                cur.execute(query, tuple(params))
+                return cur.fetchall()
+    except Exception:
+        logger.exception("pgvector recent SQL query failed")
+        return None
 
 
 def _get_taxonomy_from_sql(wing: str = None):
@@ -1379,6 +1466,41 @@ def tool_timeline(
         where = {"$and": conditions}
 
     try:
+        rows: list = []
+
+        # Fast path: pgvector direct SQL with ORDER BY occurred_at DESC.
+        if _is_pgvector_backend():
+            sql_rows = _get_recent_from_sql(
+                wing=wing,
+                limit=limit,
+                sort_field="occurred_at",
+                from_date=from_date,
+                to_date=to_date,
+            )
+            if sql_rows is not None:
+                for item_id, doc, meta, _ts in sql_rows:
+                    meta = meta or {}
+                    doc = doc or ""
+                    rows.append(
+                        {
+                            "drawer_id": item_id,
+                            "wing": meta.get("wing", ""),
+                            "room": meta.get("room", ""),
+                            "occurred_at": meta.get("occurred_at", ""),
+                            "text_preview": (doc[:200] + "..." if len(doc) > 200 else doc),
+                        }
+                    )
+                return {
+                    "entries": rows,
+                    "count": len(rows),
+                    "wing": wing or "all",
+                    "from_date": from_date,
+                    "to_date": to_date,
+                }
+
+        # Fallback: backend-agnostic metadata scan (ChromaDB or pgvector
+        # without DSN). On very large palaces the metadata-scan path can miss
+        # the newest rows; the pgvector SQL fast path above is preferred.
         kwargs = {
             "include": ["documents", "metadatas"],
             "limit": max(limit * 4, 100),
@@ -1387,7 +1509,6 @@ def tool_timeline(
             kwargs["where"] = where
         result = col.get(**kwargs)
 
-        rows = []
         for i, did in enumerate(result.get("ids", []) or []):
             meta = (result.get("metadatas") or [{}])[i] or {}
             doc = (result.get("documents") or [""])[i] or ""
@@ -1428,6 +1549,39 @@ def tool_recent(wing: str = None, limit: int = 20):
         return _no_palace()
 
     try:
+        rows: list = []
+
+        # Fast path: pgvector direct SQL with ORDER BY created_at DESC.
+        # Avoids the metadata-scan path's insertion-order bias on large
+        # palaces (343K+ drawers) where col.get(limit=N) returns the OLDEST
+        # rows, not the most recent.
+        if _is_pgvector_backend():
+            sql_rows = _get_recent_from_sql(wing=wing, limit=limit)
+            if sql_rows is not None:
+                for item_id, doc, meta, ts in sql_rows:
+                    meta = meta or {}
+                    doc = doc or ""
+                    ts_str = (
+                        meta.get("created_at")
+                        or meta.get("filed_at")
+                        or (ts.isoformat() if hasattr(ts, "isoformat") else str(ts or ""))
+                    )
+                    rows.append(
+                        {
+                            "drawer_id": item_id,
+                            "wing": meta.get("wing", ""),
+                            "room": meta.get("room", ""),
+                            "created_at": ts_str,
+                            "text_preview": (doc[:200] + "..." if len(doc) > 200 else doc),
+                        }
+                    )
+                return {
+                    "entries": rows,
+                    "count": len(rows),
+                    "wing": wing or "all",
+                }
+
+        # Fallback: backend-agnostic metadata scan path.
         kwargs = {
             "include": ["documents", "metadatas"],
             "limit": max(limit * 4, 200),
@@ -1436,7 +1590,6 @@ def tool_recent(wing: str = None, limit: int = 20):
             kwargs["where"] = {"wing": wing}
         result = col.get(**kwargs)
 
-        rows = []
         for i, did in enumerate(result.get("ids", []) or []):
             meta = (result.get("metadatas") or [{}])[i] or {}
             doc = (result.get("documents") or [""])[i] or ""

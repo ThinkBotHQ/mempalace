@@ -398,21 +398,44 @@ def _get_known_entity_names(kg: Any) -> list[str]:
     """Extract a list of known entity names from the KG.
 
     Works by reading the entities table. Falls back to an empty list on error.
+    Detects the backend type to use the correct table name:
+    - SQLite KG (KnowledgeGraph): table ``entities``
+    - pgvector KG (PgKnowledgeGraph): table ``mp_kg_entities``
     """
     try:
-        # Both KnowledgeGraph and PgKnowledgeGraph store entities in a table
-        # with a ``name`` column. We use a lightweight query.
-        if hasattr(kg, "_conn") and hasattr(kg, "_lock"):
-            with kg._lock:
-                conn = kg._conn()
+        if not (hasattr(kg, "_conn") and hasattr(kg, "_lock")):
+            return []
+
+        with kg._lock:
+            conn = kg._conn()
+
+            # Detect pgvector (psycopg) vs sqlite3 connection to pick
+            # the correct table name.
+            if hasattr(conn, "info"):
+                # psycopg connection -- pgvector backend
+                table = "mp_kg_entities"
+                with conn.cursor() as cur:
+                    cur.execute(f"SELECT name FROM {table}")  # noqa: S608
+                    rows = cur.fetchall()
+                names = []
+                for row in rows:
+                    # psycopg returns tuples by default
+                    if isinstance(row, (tuple, list)):
+                        if row[0]:
+                            names.append(row[0])
+                    elif isinstance(row, dict):
+                        val = row.get("name", "")
+                        if val:
+                            names.append(val)
+                return names
+            else:
+                # sqlite3 connection
                 rows = conn.execute("SELECT name FROM entities").fetchall()
-                # rows are sqlite3.Row or dict depending on backend
                 names = []
                 for row in rows:
                     if isinstance(row, dict):
                         names.append(row.get("name", ""))
                     else:
-                        # sqlite3.Row supports key access
                         try:
                             names.append(row["name"])
                         except (KeyError, IndexError):

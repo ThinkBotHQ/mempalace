@@ -128,6 +128,39 @@ class KnowledgeGraph:
                 self._connection.close()
                 self._connection = None
 
+    def rename_entity_references(self, old_id: str, new_id: str) -> int:
+        """Update all triples referencing ``old_id`` to use ``new_id``.
+
+        Used by ``EntityStore.merge`` to rewire relationships after merging
+        an alias entity into its canonical target. Returns the number of
+        triple rows updated (subject + object combined).
+        """
+        with self._lock:
+            conn = self._conn()
+            with conn:
+                # Ensure the target entity row exists so any future runs with
+                # SQLite ``PRAGMA foreign_keys=ON`` don't trip the FK on
+                # triples. Mirrors the safety net in the pg backend.
+                conn.execute(
+                    "INSERT OR IGNORE INTO entities (id, name) VALUES (?, ?)",
+                    (new_id, new_id),
+                )
+                c1 = conn.execute(
+                    "UPDATE triples SET subject = ? WHERE subject = ?",
+                    (new_id, old_id),
+                )
+                c2 = conn.execute(
+                    "UPDATE triples SET object = ? WHERE object = ?",
+                    (new_id, old_id),
+                )
+                # Drop the now-orphaned source entity row, mirroring the prior
+                # private-API behaviour callers were relying on.
+                conn.execute(
+                    "DELETE FROM entities WHERE id = ?",
+                    (old_id,),
+                )
+            return (c1.rowcount or 0) + (c2.rowcount or 0)
+
     def _entity_id(self, name: str) -> str:
         return name.lower().replace(" ", "_").replace("'", "")
 

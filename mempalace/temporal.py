@@ -187,9 +187,14 @@ def resolve_occurred_at(
     Priority order:
         1. Date embedded in the filepath (most explicit signal)
         2. Timestamp from the first line of a JSONL file
-        3. Earliest date mentioned in content text
-        4. filed_at (the ingest timestamp, as fallback)
-        5. Today's date (last resort)
+        3. filed_at (the ingest timestamp, as fallback)
+        4. Today's date (last resort)
+
+    Content-based date extraction (extract_date_from_content) is deliberately
+    excluded from the resolution chain because it returns the earliest date
+    mentioned in the text, which is often a historical reference rather than
+    the actual event date. For example, a journal entry written on 2026-04-24
+    that mentions "back in 2015..." would incorrectly resolve to 2015.
 
     Always returns a YYYY-MM-DD string.
     """
@@ -205,17 +210,11 @@ def resolve_occurred_at(
         if result:
             return result
 
-    # 3. Content
-    if content:
-        result = extract_date_from_content(content)
-        if result:
-            return result
-
-    # 4. filed_at
+    # 3. filed_at
     if filed_at:
         m = _ISO_DATE_RE.search(filed_at)
         if m:
             return m.group(1)
 
-    # 5. Today
+    # 4. Today
     return date.today().isoformat()
