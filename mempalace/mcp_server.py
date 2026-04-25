@@ -643,6 +643,48 @@ def tool_get_taxonomy():
     return result
 
 
+def _pgvector_search(query_text, wing, room, n_results, max_distance):
+    """Direct pgvector search bypassing searcher.py's ChromaDB path."""
+    col = _get_collection()
+    if col is None:
+        return _no_palace()
+    where = {}
+    if wing:
+        where["wing"] = wing
+    if room:
+        where["room"] = room
+    qr = col.query(
+        query_texts=[query_text],
+        n_results=n_results,
+        where=where if where else None,
+    )
+    results = []
+    for i in range(len(qr.ids[0])):
+        dist = qr.distances[0][i] if qr.distances else 0.0
+        if max_distance and max_distance > 0 and dist > max_distance:
+            continue
+        meta = qr.metadatas[0][i] if qr.metadatas else {}
+        results.append({
+            "text": qr.documents[0][i] if qr.documents else "",
+            "wing": meta.get("wing", ""),
+            "room": meta.get("room", ""),
+            "source_file": meta.get("source_file", ""),
+            "created_at": meta.get("filed_at", ""),
+            "similarity": round(1.0 - dist, 3) if dist else 0.0,
+            "distance": round(dist, 4) if dist else 0.0,
+            "effective_distance": round(dist, 4) if dist else 0.0,
+            "closet_boost": 0.0,
+            "matched_via": "drawer",
+            "bm25_score": 0.0,
+        })
+    return {
+        "query": query_text,
+        "filters": {"wing": wing, "room": room},
+        "total_before_filter": len(qr.ids[0]) if qr.ids else 0,
+        "results": results,
+    }
+
+
 def tool_search(
     query: str,
     limit: int = 5,
@@ -658,21 +700,22 @@ def tool_search(
         room = _sanitize_optional_name(room, "room")
     except ValueError as e:
         return {"error": str(e)}
-    # Backwards compat: accept old name
-    # Backwards compat: convert old similarity scale (higher=stricter) to
-    # distance scale (lower=stricter). Similarity 0.8 → distance 0.2.
     dist = (1.0 - min_similarity) if min_similarity is not None else max_distance
-    # Mitigate system prompt contamination (Issue #333)
     sanitized = sanitize_query(query)
-    result = search_memories(
-        sanitized["clean_query"],
-        palace_path=_config.palace_path,
-        wing=wing,
-        room=room,
-        n_results=limit,
-        max_distance=dist,
-    )
-    # Attach sanitizer metadata for transparency
+    backend_name = os.environ.get("MEMPALACE_BACKEND", "chroma")
+    if backend_name != "chroma":
+        result = _pgvector_search(
+            sanitized["clean_query"], wing, room, limit, dist,
+        )
+    else:
+        result = search_memories(
+            sanitized["clean_query"],
+            palace_path=_config.palace_path,
+            wing=wing,
+            room=room,
+            n_results=limit,
+            max_distance=dist,
+        )
     if sanitized["was_sanitized"]:
         result["query_sanitized"] = True
         result["sanitizer"] = {
