@@ -1,0 +1,33 @@
+services:
+  pgvector:
+    image: pgvector/pgvector:pg17
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: mempalace
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mcp:
+    build:
+      context: ..
+      dockerfile: mempalace-server/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "15033:15033"
+    environment:
+      MEMPALACE_BACKEND: pgvector
+      MEMPALACE_PGVECTOR_DSN: postgresql://postgres:${POSTGRES_PASSWORD}@pgvector:5432/mempalace
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      MEMPALACE_SERVER_PORT: "15033"
+    depends_on:
+      pgvector:
+        condition: service_healthy
+
+volumes:
+  pgdata:
