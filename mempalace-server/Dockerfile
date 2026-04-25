@@ -25,4 +25,4 @@ RUN uv pip install --system ./mempalace-core ./mempalace-pgvector \
 
 EXPOSE 15033
 
-CMD ["uvicorn", "mempalace_server.app:app", "--host", "0.0.0.0", "--port", "15033"]
+CMD ["mempalace-server"]
