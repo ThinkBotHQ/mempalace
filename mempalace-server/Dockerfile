@@ -16,10 +16,11 @@ COPY mempalace-pgvector/src/ ./mempalace-pgvector/src/
 COPY mempalace-server/pyproject.toml ./mempalace-server/pyproject.toml
 COPY mempalace-server/src/ ./mempalace-server/src/
 
-RUN uv pip install --system \
-    ./mempalace-core \
-    ./mempalace-pgvector \
-    ./mempalace-server
+# Install each package explicitly from local paths.
+# --no-deps on mempalace-server avoids PyPI resolution for local siblings.
+RUN uv pip install --system ./mempalace-core ./mempalace-pgvector \
+    && uv pip install --system --no-deps ./mempalace-server \
+    && uv pip install --system "mcp>=1.0,<3.0" "starlette>=1.0,<2.0" "uvicorn[standard]>=0.30,<1.0" "httpx>=0.27,<1.0" "psycopg[binary]>=3.2.0,<4.0"
 
 EXPOSE 15033
 
