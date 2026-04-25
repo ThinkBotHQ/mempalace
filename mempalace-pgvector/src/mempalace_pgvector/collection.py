@@ -191,6 +191,128 @@ class PgvectorCollection(BaseCollection):
             embeddings=all_embeds,
         )
 
+    def hybrid_query(
+        self,
+        *,
+        query_text: str,
+        query_embedding: list[float],
+        n_results: int = 10,
+        where: Optional[dict] = None,
+        where_document: Optional[dict] = None,
+    ) -> QueryResult:
+        """Hybrid vector + full-text search using Reciprocal Rank Fusion.
+
+        Runs two candidate searches in parallel inside a single SQL CTE:
+        - Vector: top 50 by cosine similarity (``embedding <=> query``)
+        - FTS:    top 50 by ts_rank_cd against ``websearch_to_tsquery``
+
+        The results are fused with Reciprocal Rank Fusion (k=60), the
+        canonical formulation from Cormack et al. 2009::
+
+            score(doc) = sum over searches of 1 / (k + rank)
+
+        Filters from ``where`` / ``where_document`` are applied to BOTH
+        candidate sets so RRF ranks within the filtered subset.
+
+        Returns a standard ``QueryResult`` with ``ids[0]``, ``documents[0]``,
+        ``metadatas[0]``, and ``distances[0]`` populated. Distances here
+        are ``1 - rrf_score`` so smaller is "better" (matching the rest of
+        the QueryResult convention).
+        """
+        # Filter SQL is reused inside both branches of the CTE. compile_where
+        # yields a fragment that does not include the leading WHERE.
+        # We use param_offset=0 here because we'll pass the filter params
+        # twice (once for each branch) and re-bind via psycopg %s pyformat.
+        filter_sql, filter_params = compile_where(where, where_document, param_offset=0)
+        filter_sql_py, filter_params = _positional_to_pyformat(filter_sql, filter_params, 0)
+
+        extra_filter = f" AND {filter_sql_py}" if filter_sql_py else ""
+
+        sql = f"""
+            WITH vec AS (
+                SELECT d.item_id,
+                       row_number() OVER (ORDER BY d.embedding <=> %s::vector) AS rnk
+                FROM mp_documents d
+                WHERE d.collection_id = %s{extra_filter}
+                ORDER BY d.embedding <=> %s::vector
+                LIMIT 50
+            ),
+            fts AS (
+                SELECT d.item_id,
+                       row_number() OVER (
+                           ORDER BY ts_rank_cd(d.document_tsv,
+                                               websearch_to_tsquery('english', %s)) DESC
+                       ) AS rnk
+                FROM mp_documents d
+                WHERE d.collection_id = %s
+                  AND d.document_tsv @@ websearch_to_tsquery('english', %s){extra_filter}
+                ORDER BY ts_rank_cd(d.document_tsv,
+                                    websearch_to_tsquery('english', %s)) DESC
+                LIMIT 50
+            ),
+            fused AS (
+                SELECT item_id,
+                       SUM(1.0 / (60 + rnk)) AS score
+                FROM (
+                    SELECT item_id, rnk FROM vec
+                    UNION ALL
+                    SELECT item_id, rnk FROM fts
+                ) u
+                GROUP BY item_id
+            )
+            SELECT d.item_id, d.document, d.metadata, f.score
+            FROM fused f
+            JOIN mp_documents d
+              ON d.collection_id = %s AND d.item_id = f.item_id
+            ORDER BY f.score DESC
+            LIMIT %s
+        """
+
+        params: list = []
+        # vec branch
+        params.append(query_embedding)              # ORDER BY in row_number
+        params.append(str(self._collection_id))     # collection_id =
+        params.extend(filter_params)                # filter (vec)
+        params.append(query_embedding)              # outer ORDER BY for LIMIT
+        # fts branch
+        params.append(query_text)                   # ts_rank_cd in row_number
+        params.append(str(self._collection_id))     # collection_id =
+        params.append(query_text)                   # @@ websearch_to_tsquery
+        params.extend(filter_params)                # filter (fts)
+        params.append(query_text)                   # outer ORDER BY ts_rank_cd
+        # final join
+        params.append(str(self._collection_id))     # JOIN d.collection_id
+        params.append(n_results)
+
+        with self._conn.cursor() as cur:
+            cur.execute("SET LOCAL hnsw.ef_search = 100")
+            try:
+                cur.execute("SET LOCAL hnsw.iterative_scan = relaxed_order")
+            except psycopg.errors.UndefinedObject:
+                pass
+            cur.execute(sql, params)
+            rows = cur.fetchall()
+
+        hit_ids: list[str] = []
+        hit_docs: list[str] = []
+        hit_metas: list[dict] = []
+        hit_dists: list[float] = []
+
+        for row in rows:
+            hit_ids.append(row[0])
+            hit_docs.append(row[1])
+            hit_metas.append(row[2])
+            # Convert RRF score to a distance-like scalar where lower = better
+            hit_dists.append(1.0 - float(row[3]))
+
+        return QueryResult(
+            ids=[hit_ids],
+            documents=[hit_docs],
+            metadatas=[hit_metas],
+            distances=[hit_dists],
+            embeddings=None,
+        )
+
     def get(
         self,
         *,

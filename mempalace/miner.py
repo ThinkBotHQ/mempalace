@@ -26,6 +26,7 @@ from .palace import (
     purge_file_closets,
     upsert_closet_lines,
 )
+from .temporal import resolve_occurred_at
 
 READABLE_EXTENSIONS = {
     ".txt",
@@ -547,13 +548,14 @@ def add_drawer(
     """Add one drawer to the palace."""
     drawer_id = f"drawer_{wing}_{room}_{hashlib.sha256((source_file + str(chunk_index)).encode()).hexdigest()[:24]}"
     try:
+        filed_at = datetime.now().isoformat()
         metadata = {
             "wing": wing,
             "room": room,
             "source_file": source_file,
             "chunk_index": chunk_index,
             "added_by": agent,
-            "filed_at": datetime.now().isoformat(),
+            "filed_at": filed_at,
             "normalize_version": NORMALIZE_VERSION,
         }
         # Store file mtime so we can detect modifications later.
@@ -561,6 +563,10 @@ def add_drawer(
             metadata["source_mtime"] = os.path.getmtime(source_file)
         except OSError:
             pass
+        # Stamp with the date the content originally occurred
+        metadata["occurred_at"] = resolve_occurred_at(
+            filepath=source_file, content=content, filed_at=filed_at
+        )
         # Tag with hall for graph connectivity within wings
         metadata["hall"] = detect_hall(content)
         # Tag with entity names for filterable search

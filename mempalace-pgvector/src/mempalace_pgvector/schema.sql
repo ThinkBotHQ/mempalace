@@ -41,9 +41,17 @@ CREATE INDEX IF NOT EXISTS idx_mp_docs_metadata_gin
 CREATE INDEX IF NOT EXISTS idx_mp_docs_wing ON mp_documents ((metadata->>'wing'));
 CREATE INDEX IF NOT EXISTS idx_mp_docs_room ON mp_documents ((metadata->>'room'));
 CREATE INDEX IF NOT EXISTS idx_mp_docs_source ON mp_documents ((metadata->>'source_file'));
+CREATE INDEX IF NOT EXISTS idx_mp_docs_occurred_at
+    ON mp_documents ((metadata->>'occurred_at'));
 
 -- Collection lookup
 CREATE INDEX IF NOT EXISTS idx_mp_docs_collection ON mp_documents (collection_id);
+
+-- Full-text search column (generated, kept in sync with document)
+ALTER TABLE mp_documents
+  ADD COLUMN IF NOT EXISTS document_tsv tsvector
+  GENERATED ALWAYS AS (to_tsvector('english', document)) STORED;
+CREATE INDEX IF NOT EXISTS idx_mp_docs_tsv ON mp_documents USING GIN (document_tsv);
 
 -- ── Knowledge Graph ───────────────────────────────────────────────────────
 -- Temporal entity-relationship graph (people, projects, tools, concepts + typed edges)

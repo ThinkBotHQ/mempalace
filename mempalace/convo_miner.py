@@ -23,6 +23,7 @@ from .palace import (
     get_collection,
     mine_lock,
 )
+from .temporal import resolve_occurred_at
 
 
 # Cached hall keywords — avoids re-reading config per drawer
@@ -306,7 +307,9 @@ def scan_convos(convo_dir: str) -> list:
 # =============================================================================
 
 
-def _file_chunks_locked(collection, source_file, chunks, wing, room, agent, extract_mode):
+def _file_chunks_locked(
+    collection, source_file, chunks, wing, room, agent, extract_mode, content=""
+):
     """Lock the source file, purge stale drawers, and upsert fresh chunks.
 
     Combines the per-file serialization that prevents concurrent agents from
@@ -332,6 +335,10 @@ def _file_chunks_locked(collection, source_file, chunks, wing, room, agent, extr
         except Exception:
             pass
 
+        # Resolve the occurred_at date once per file
+        filed_at = datetime.now().isoformat()
+        occurred_at = resolve_occurred_at(filepath=source_file, content=content, filed_at=filed_at)
+
         for chunk in chunks:
             chunk_room = chunk.get("memory_type", room) if extract_mode == "general" else room
             if extract_mode == "general":
@@ -349,10 +356,11 @@ def _file_chunks_locked(collection, source_file, chunks, wing, room, agent, extr
                             "source_file": source_file,
                             "chunk_index": chunk["chunk_index"],
                             "added_by": agent,
-                            "filed_at": datetime.now().isoformat(),
+                            "filed_at": filed_at,
                             "ingest_mode": "convos",
                             "extract_mode": extract_mode,
                             "normalize_version": NORMALIZE_VERSION,
+                            "occurred_at": occurred_at,
                         }
                     ],
                 )
@@ -469,7 +477,14 @@ def mine_convos(
         # Lock + purge stale + file fresh chunks. Lock serializes concurrent
         # agents; purge removes pre-v2 drawers so the schema bump applies.
         drawers_added, room_delta, skipped = _file_chunks_locked(
-            collection, source_file, chunks, wing, room, agent, extract_mode
+            collection,
+            source_file,
+            chunks,
+            wing,
+            room,
+            agent,
+            extract_mode,
+            content=content,
         )
         if skipped:
             files_skipped += 1
