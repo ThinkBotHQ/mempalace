@@ -6,17 +6,44 @@ __pycache__/
 .pytest_cache/
 mempal.yaml
 .a5c/
+
+# AI tool state — session IDs, costs, throttle state
 .claude/
 .codex/
 .codex
+.cursor/
+.windsurf/
+.aider*
+.continue/
 
-# Environment
+.claude-stats.json
+.claude-throttle-*
+
+# Conductor / internal plans
+tmp/conductor/
+tmp/
+
+# Environment and secrets
 .env
 .env.*
+*.env
+.envrc
+.secrets
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+credentials.json
+service-account*.json
+*-credentials.json
+*_credentials.json
 
 # OS
 .DS_Store
 Thumbs.db
+Desktop.ini
+._*
 
 # IDEs
 .idea/
@@ -24,15 +51,46 @@ Thumbs.db
 *.swp
 *.swo
 *~
+*.sublime-workspace
+*.sublime-project
 
 # Coverage
 htmlcov/
 .coverage
+.coverage.*
 coverage.xml
+*.gcov
 
 # Virtual environments
 .venv/
 venv/
+env/
+.tox/
 
 # ChromaDB local data
 *.sqlite3-journal
+
+# Docker
+docker-compose.override.yml
+.docker/
+
+# Database dumps
+*.sql.gz
+*.dump
+*.pgdump
+*.bak
+
+# Logs
+*.log
+logs/
+
+# Runtime
+*.pid
+*.sock
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Package manager
+pip-log.txt
+pip-delete-this-directory.txt
