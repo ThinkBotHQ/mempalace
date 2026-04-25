@@ -57,7 +57,10 @@ from .config import (  # noqa: E402
     sanitize_content,
 )
 from .version import __version__  # noqa: E402
-from .backends.chroma import ChromaBackend, ChromaCollection  # noqa: E402
+
+# ChromaDB is imported lazily inside _get_client / _get_collection only when
+# MEMPALACE_BACKEND=chroma (default). Avoids 300MB+ deps + 1-2s startup cost
+# when running on pgvector (or any other) backend.
 from .backends.base import PalaceRef  # noqa: E402
 from .backends.registry import get_backend  # noqa: E402
 from .query_sanitizer import sanitize_query  # noqa: E402
@@ -97,12 +100,27 @@ if _args.palace:
     os.environ["MEMPALACE_PALACE_PATH"] = os.path.abspath(_args.palace)
 
 _config = MempalaceConfig()
-# Only override KG path when --palace is explicitly provided; otherwise use
-# KnowledgeGraph's default (~/.mempalace/knowledge_graph.sqlite3).
-if _args.palace:
-    _kg = KnowledgeGraph(db_path=os.path.join(_config.palace_path, "knowledge_graph.sqlite3"))
-else:
-    _kg = KnowledgeGraph()
+# Lazy KG init: only construct on first use so MCP startup is fast and
+# pgvector users avoid touching the SQLite KG path. When
+# MEMPALACE_BACKEND=pgvector, use PgKnowledgeGraph instead.
+_kg = None
+
+
+def _get_kg():
+    global _kg
+    if _kg is None:
+        backend_name = os.environ.get("MEMPALACE_BACKEND", "chroma")
+        if backend_name == "pgvector":
+            from mempalace_pgvector.knowledge_graph import PgKnowledgeGraph
+
+            _kg = PgKnowledgeGraph()
+        elif _args.palace:
+            _kg = KnowledgeGraph(
+                db_path=os.path.join(_config.palace_path, "knowledge_graph.sqlite3")
+            )
+        else:
+            _kg = KnowledgeGraph()
+    return _kg
 
 
 _client_cache = None
@@ -204,6 +222,8 @@ def _get_client():
     mtime_changed = current_mtime != 0.0 and abs(current_mtime - _palace_db_mtime) > 0.01
 
     if _client_cache is None or inode_changed or mtime_changed:
+        from .backends.chroma import ChromaBackend  # lazy: only chroma path
+
         _client_cache = ChromaBackend.make_client(_config.palace_path)
         _collection_cache = None
         _metadata_cache = None
@@ -227,7 +247,11 @@ def _get_collection(create=False):
         try:
             if _collection_cache is None or create:
                 backend = get_backend(backend_name)
-                palace_id = os.environ.get("MEMPALACE_PALACE_ID") or Path(_config.palace_path).name or "default"
+                palace_id = (
+                    os.environ.get("MEMPALACE_PALACE_ID")
+                    or Path(_config.palace_path).name
+                    or "default"
+                )
                 palace = PalaceRef(id=palace_id, local_path=_config.palace_path)
                 _collection_cache = backend.get_collection(
                     palace=palace,
@@ -241,6 +265,8 @@ def _get_collection(create=False):
             return None
 
     try:
+        from .backends.chroma import ChromaCollection  # lazy: only chroma path
+
         client = _get_client()
         if create:
             _collection_cache = ChromaCollection(
@@ -286,6 +312,45 @@ def _fetch_all_metadata(col, where=None):
     return all_meta
 
 
+def _is_pgvector_backend() -> bool:
+    return os.environ.get("MEMPALACE_BACKEND") == "pgvector"
+
+
+def _get_taxonomy_from_sql(wing: str = None):
+    """Get wing/room counts via SQL GROUP BY instead of scanning all metadata.
+
+    Returns a list of (wing, room, drawer_count) rows, or None if the DSN
+    cannot be resolved or psycopg is unavailable. Optional ``wing`` filter
+    restricts results to a single wing.
+    """
+    dsn = os.environ.get("MEMPALACE_PGVECTOR_DSN") or os.environ.get("DATABASE_URL")
+    if not dsn:
+        return None
+    try:
+        import psycopg
+    except ImportError:
+        return None
+    query = (
+        "SELECT metadata->>'wing' AS wing, "
+        "       metadata->>'room' AS room, "
+        "       count(*) AS drawers "
+        "FROM mp_documents "
+    )
+    params: tuple = ()
+    if wing is not None:
+        query += "WHERE metadata->>'wing' = %s "
+        params = (wing,)
+    query += "GROUP BY 1, 2 ORDER BY 1, 2"
+    try:
+        with psycopg.connect(dsn) as conn:
+            with conn.cursor() as cur:
+                cur.execute(query, params)
+                return cur.fetchall()
+    except Exception:
+        logger.exception("pgvector taxonomy SQL query failed")
+        return None
+
+
 _metadata_cache = None
 _metadata_cache_time = 0
 _METADATA_CACHE_TTL = 5.0  # seconds
@@ -323,15 +388,16 @@ def tool_status():
     # Use create=True only when a palace DB already exists on disk -- this
     # bootstraps the ChromaDB collection on a valid-but-empty palace without
     # accidentally creating a palace in a non-existent directory (#830).
-    db_exists = os.path.isfile(os.path.join(_config.palace_path, "chroma.sqlite3"))
-    col = _get_collection(create=db_exists)
+    if _is_pgvector_backend():
+        col = _get_collection()
+    else:
+        db_exists = os.path.isfile(os.path.join(_config.palace_path, "chroma.sqlite3"))
+        col = _get_collection(create=db_exists)
     if not col:
         return _no_palace()
-    count = col.count()
     wings = {}
     rooms = {}
     result = {
-        "total_drawers": count,
         "wings": wings,
         "rooms": rooms,
         "palace_path": _config.palace_path,
@@ -339,6 +405,20 @@ def tool_status():
         "aaak_dialect": AAAK_SPEC,
     }
     try:
+        if _is_pgvector_backend():
+            sql_rows = _get_taxonomy_from_sql()
+            if sql_rows is not None:
+                total = 0
+                for w, r, c in sql_rows:
+                    w = w or "unknown"
+                    r = r or "unknown"
+                    wings[w] = wings.get(w, 0) + c
+                    rooms[r] = rooms.get(r, 0) + c
+                    total += c
+                result["total_drawers"] = total
+                return result
+        # Default path: ChromaDB metadata scan (also used as fallback)
+        result["total_drawers"] = col.count()
         all_meta = _get_cached_metadata(col)
         for m in all_meta:
             m = m or {}
@@ -393,6 +473,13 @@ def tool_list_wings():
     wings = {}
     result = {"wings": wings}
     try:
+        if _is_pgvector_backend():
+            sql_rows = _get_taxonomy_from_sql()
+            if sql_rows is not None:
+                for w, _r, c in sql_rows:
+                    w = w or "unknown"
+                    wings[w] = wings.get(w, 0) + c
+                return result
         all_meta = _get_cached_metadata(col)
         for m in all_meta:
             m = m or {}
@@ -416,6 +503,13 @@ def tool_list_rooms(wing: str = None):
     rooms = {}
     result = {"wing": wing or "all", "rooms": rooms}
     try:
+        if _is_pgvector_backend():
+            sql_rows = _get_taxonomy_from_sql(wing=wing)
+            if sql_rows is not None:
+                for _w, r, c in sql_rows:
+                    r = r or "unknown"
+                    rooms[r] = rooms.get(r, 0) + c
+                return result
         where = {"wing": wing} if wing else None
         all_meta = _fetch_all_metadata(col, where=where)
         for m in all_meta:
@@ -436,6 +530,16 @@ def tool_get_taxonomy():
     taxonomy = {}
     result = {"taxonomy": taxonomy}
     try:
+        if _is_pgvector_backend():
+            sql_rows = _get_taxonomy_from_sql()
+            if sql_rows is not None:
+                for w, r, c in sql_rows:
+                    w = w or "unknown"
+                    r = r or "unknown"
+                    if w not in taxonomy:
+                        taxonomy[w] = {}
+                    taxonomy[w][r] = taxonomy[w].get(r, 0) + c
+                return result
         all_meta = _get_cached_metadata(col)
         for m in all_meta:
             m = m or {}
@@ -874,7 +978,7 @@ def tool_kg_query(entity: str, as_of: str = None, direction: str = "both"):
         return {"error": str(e)}
     if direction not in ("outgoing", "incoming", "both"):
         return {"error": "direction must be 'outgoing', 'incoming', or 'both'"}
-    results = _kg.query_entity(entity, as_of=as_of, direction=direction)
+    results = _get_kg().query_entity(entity, as_of=as_of, direction=direction)
     return {"entity": entity, "as_of": as_of, "facts": results, "count": len(results)}
 
 
@@ -899,7 +1003,7 @@ def tool_kg_add(
             "source_closet": source_closet,
         },
     )
-    triple_id = _kg.add_triple(
+    triple_id = _get_kg().add_triple(
         subject, predicate, object, valid_from=valid_from, source_closet=source_closet
     )
     return {"success": True, "triple_id": triple_id, "fact": f"{subject} → {predicate} → {object}"}
@@ -917,7 +1021,7 @@ def tool_kg_invalidate(subject: str, predicate: str, object: str, ended: str = N
         "kg_invalidate",
         {"subject": subject, "predicate": predicate, "object": object, "ended": ended},
     )
-    _kg.invalidate(subject, predicate, object, ended=ended)
+    _get_kg().invalidate(subject, predicate, object, ended=ended)
     return {
         "success": True,
         "fact": f"{subject} → {predicate} → {object}",
@@ -932,13 +1036,13 @@ def tool_kg_timeline(entity: str = None):
             entity = sanitize_kg_value(entity, "entity")
         except ValueError as e:
             return {"error": str(e)}
-    results = _kg.timeline(entity)
+    results = _get_kg().timeline(entity)
     return {"entity": entity or "all", "timeline": results, "count": len(results)}
 
 
 def tool_kg_stats():
     """Knowledge graph overview: entities, triples, relationship types."""
-    return _kg.stats()
+    return _get_kg().stats()
 
 
 # ==================== AGENT DIARY ====================
