@@ -6,6 +6,7 @@ RUN pip install --no-cache-dir uv
 
 # Copy the root mempalace package (pyproject.toml + mempalace/ dir)
 COPY pyproject.toml ./mempalace-core/pyproject.toml
+COPY README.md ./mempalace-core/README.md
 COPY mempalace/ ./mempalace-core/mempalace/
 
 # Copy pgvector backend package
