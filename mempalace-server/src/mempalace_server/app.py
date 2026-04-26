@@ -220,12 +220,16 @@ def build_app(*, dsn: str | None = None) -> Starlette:
 
     rate_limiter = RateLimiter()
 
+    async def _handle_mcp_route(request: Request):
+        await handle_mcp(request.scope, request.receive, request._send)
+
     app = Starlette(
         debug=False,
         lifespan=lifespan,
         routes=[
             Route("/health", _health, methods=["GET"]),
             Route("/healthz", _health, methods=["GET"]),
+            Mount("/mcp/", app=handle_mcp),
             Mount("/mcp", app=handle_mcp),
         ],
     )
