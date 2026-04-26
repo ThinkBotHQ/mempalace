@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import functools
 import logging
+import math
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Protocol, runtime_checkable
@@ -23,6 +24,20 @@ _BATCH_SIZE = 100
 _PARALLEL_WORKERS = 15
 _DOC_PREFIX = "task: retrieval document | "
 _QUERY_PREFIX = "task: search query | query: "
+
+
+def _l2_normalize(vec: list[float]) -> list[float]:
+    """L2-normalize an embedding so ||vec|| == 1.
+
+    Cosine similarity equals dot product on unit vectors, so normalizing
+    once at write/query time lets the index avoid recomputing norms on
+    every comparison and keeps distances in the canonical [0, 2] range.
+    Returns the original vector unchanged if its norm is zero.
+    """
+    norm = math.sqrt(sum(x * x for x in vec))
+    if norm == 0:
+        return vec
+    return [x / norm for x in vec]
 
 
 @runtime_checkable
@@ -73,15 +88,22 @@ class GeminiEmbedder:
         key = tuple(texts)
         cached = self._query_cache_get(key)
         if cached is not None:
-            return cached
+            # Cached vectors are already L2-normalized at the point they
+            # were stored by _embed_batched. Re-normalizing is a no-op on
+            # unit vectors but defends against accidental cache pollution.
+            return [_l2_normalize(list(v)) for v in cached]
         prefixed = [_QUERY_PREFIX + t for t in texts]
         result = self._embed_batched(prefixed)
+        # _embed_batched already normalizes; store normalized vectors.
         self._query_cache_put(key, result)
         return result
 
     def _embed_batched(self, texts: list[str]) -> list[list[float]]:
         if len(texts) <= 1:
-            return [self._call_api(t).embeddings[0].values for t in texts]
+            return [
+                _l2_normalize(list(self._call_api(t).embeddings[0].values))
+                for t in texts
+            ]
 
         results: list[tuple[int, list[float]]] = []
         with ThreadPoolExecutor(max_workers=_PARALLEL_WORKERS) as pool:
@@ -92,7 +114,9 @@ class GeminiEmbedder:
             for future in as_completed(futures):
                 idx = futures[future]
                 result = future.result()
-                results.append((idx, result.embeddings[0].values))
+                results.append(
+                    (idx, _l2_normalize(list(result.embeddings[0].values)))
+                )
 
         results.sort(key=lambda x: x[0])
         return [vec for _, vec in results]

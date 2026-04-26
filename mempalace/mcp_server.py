@@ -644,7 +644,18 @@ def tool_get_taxonomy():
 
 
 def _pgvector_search(query_text, wing, room, n_results, max_distance):
-    """Direct pgvector search bypassing searcher.py's ChromaDB path."""
+    """Direct pgvector search bypassing searcher.py's ChromaDB path.
+
+    Pipeline (best-effort, with graceful fallbacks):
+      1. Hybrid query (RRF of vector + tsvector full-text). Falls back to
+         pure vector ``col.query()`` if hybrid fails (e.g. tsvector column
+         missing, embedder unavailable, or any SQL error).
+      2. FlashRank cross-encoder rerank on the candidate set. Skipped
+         silently if FlashRank isn't installed or rerank raises.
+
+    The response includes ``search_method`` indicating which path
+    succeeded: ``"hybrid+rerank"``, ``"hybrid"``, or ``"vector"``.
+    """
     col = _get_collection()
     if col is None:
         return _no_palace()
@@ -653,19 +664,68 @@ def _pgvector_search(query_text, wing, room, n_results, max_distance):
         where["wing"] = wing
     if room:
         where["room"] = room
-    qr = col.query(
-        query_texts=[query_text],
-        n_results=n_results,
-        where=where if where else None,
-    )
+    where_arg = where if where else None
+
+    # 1) Try hybrid query (vector + FTS via RRF). Fall back to vector-only
+    #    on any failure — tsvector setup, embedder errors, SQL issues, etc.
+    qr = None
+    search_method = "vector"
+    try:
+        embedder = getattr(col, "_embedder", None)
+        if embedder is None:
+            raise RuntimeError("collection has no embedder")
+        query_embedding = embedder.embed_query([query_text])[0]
+        qr = col.hybrid_query(
+            query_text=query_text,
+            query_embedding=query_embedding,
+            n_results=n_results,
+            where=where_arg,
+        )
+        search_method = "hybrid"
+    except Exception as e:
+        logger.debug("hybrid_query failed, falling back to vector: %s", e)
+        qr = col.query(
+            query_texts=[query_text],
+            n_results=n_results,
+            where=where_arg,
+        )
+        search_method = "vector"
+
+    # Build flat per-hit lists so we can rerank, distance-filter, and
+    # then re-emit in the response shape.
+    ids0 = qr.ids[0] if qr.ids else []
+    docs0 = qr.documents[0] if qr.documents else [""] * len(ids0)
+    metas0 = qr.metadatas[0] if qr.metadatas else [{}] * len(ids0)
+    dists0 = qr.distances[0] if qr.distances else [0.0] * len(ids0)
+    total_before_filter = len(ids0)
+
+    # 2) Optional cross-encoder rerank. We rerank BEFORE distance filtering
+    #    so the cross-encoder gets to vote on the full candidate set.
+    if ids0:
+        try:
+            from mempalace_pgvector.reranker import rerank as _rerank
+
+            order = _rerank(query_text, list(docs0), top_n=len(docs0))
+            if order:
+                docs0 = [docs0[i] for i in order]
+                metas0 = [metas0[i] for i in order]
+                dists0 = [dists0[i] for i in order]
+                ids0 = [ids0[i] for i in order]
+                if search_method == "hybrid":
+                    search_method = "hybrid+rerank"
+                else:
+                    search_method = "vector+rerank"
+        except Exception as e:
+            logger.debug("rerank skipped: %s", e)
+
     results = []
-    for i in range(len(qr.ids[0])):
-        dist = qr.distances[0][i] if qr.distances else 0.0
+    for i in range(len(ids0)):
+        dist = dists0[i] if i < len(dists0) else 0.0
         if max_distance and max_distance > 0 and dist > max_distance:
             continue
-        meta = qr.metadatas[0][i] if qr.metadatas else {}
+        meta = metas0[i] if i < len(metas0) else {}
         results.append({
-            "text": qr.documents[0][i] if qr.documents else "",
+            "text": docs0[i] if i < len(docs0) else "",
             "wing": meta.get("wing", ""),
             "room": meta.get("room", ""),
             "source_file": meta.get("source_file", ""),
@@ -680,7 +740,8 @@ def _pgvector_search(query_text, wing, room, n_results, max_distance):
     return {
         "query": query_text,
         "filters": {"wing": wing, "room": room},
-        "total_before_filter": len(qr.ids[0]) if qr.ids else 0,
+        "total_before_filter": total_before_filter,
+        "search_method": search_method,
         "results": results,
     }
 
